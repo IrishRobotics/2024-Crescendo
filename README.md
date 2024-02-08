@@ -14,13 +14,20 @@ The code is divided into several packages, each responsible for a different aspe
 
 ### Building/Deploying to the Robot
 - Run `./gradlew build` to build the code. Use the `--info` flag for more details
-- Run `./gradlew deploy -PteamNumber=2509` to deploy to the robot in Terminal (Mac) or Powershell (Windows)
+- Run `./gradlew deploy -PteamNumber=2606` to deploy to the robot in Terminal (Mac) or Powershell (Windows)
 
 ### Wiring Compontents Diagram
 
 Subsystem  | Controller       | Name           | ID     | PDP  |
 ---------- | ---------------- | -------------- | ------ | ---- |
-           |                  |                |        | ---- |
+Drivetrain | SparkMax         | LeftFront      | 1      |      |
+Drivetrain | SparkMax         | RightFront     | 2      |      |
+Drivetrain | SparkMax         | LeftRear       | 3      |      |
+Drivetrain | SparkMax         | RightRear      | 4      |      |
+Intake     | TalonSRX         | Intake         | 5      |      |
+Shooter    | SparkMax         | ShooterTop     | 6      |      |
+Shooter    | SparkMax         | ShooterBottom  | 7      |      |
+Arm        | ?                | ArmMotor       | 8      |      |
 
 
 ## Code Highlights
@@ -57,11 +64,11 @@ Subsystem  | Controller       | Name           | ID     | PDP  |
 2. Increase `P` until the system starts oscillating for a period of `Tu`. You want the oscillation to be large enough that you can time it. This maximum `P` will be referred to as `Ku`.
 3. Use the chart below to calculate different `P`, `I`, and `D` values.
 
-Control Types | P | I | D |
-------------- | - | - | - |
-P | .5*`Ku` | 0 | 0 |
-PI | .45*`Ku` | .54*`Ku`/`Tu` | 0 |
-PID | .6*`Ku` | 1.2*`Ku`/`Tu` |	3*`Ku`*`Tu`/40 |
+Control Types | P        | I             | D              |
+------------- | -------- | ------------- | -------------- |
+P             | .5*`Ku`  | 0             | 0              |
+PI            | .45*`Ku` | .54*`Ku`/`Tu` | 0              |
+PID           | .6*`Ku`  | 1.2*`Ku`/`Tu` | 3*`Ku`*`Tu`/40 |
 
 ## Programmers
 

@@ -4,12 +4,17 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.Constants;
+import frc.robot.commands.Drivetrain.OperatorDrive;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -19,15 +24,35 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  
+  // Subsystems
+  private Drivetrain sDrivetrain = new Drivetrain();
+  private Intake sIntake = new Intake();
+  private Shooter sShooter = new Shooter();
+  private Arm sArm  = new Arm();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // Joysticks
+  private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
+
+  // Joystick Buttons
+  
+  private Trigger toggleGearBtn;
+  // TODO - Add buttons
+
+  // Auto Chooser
+  SendableChooser<Command> autoSelect = new SendableChooser<>();
+  
+  // Autonomous
+  // TODO - Add auto commands
+  
+
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Default Commands
+    sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
+    
     // Configure the trigger bindings
     configureBindings();
   }
@@ -42,22 +67,26 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    
+    toggleGearBtn = new JoystickButton(mOpController, XboxController.Button.kStart.value);
+    toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
+
+  
+  // Getter Methods
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+  public Command getAutonomousCommand() {return autoSelect.getSelected();  }
+  public Drivetrain getDrivetrain(){return sDrivetrain;}
+  public Intake getIntake(){return sIntake;}
+  public Shooter getShooter(){return sShooter;}
+  public Arm getArm(){return sArm;}
+  public XboxController getOpController(){return mOpController;}
 }
