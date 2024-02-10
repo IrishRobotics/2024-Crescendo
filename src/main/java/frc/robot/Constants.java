@@ -54,13 +54,27 @@ public final class Constants {
     public static final double kDrop2RMP = 100;
 
     //Input
-    public static final int kShootButton = XboxController.Button.kB.value;
-    public static final int kDropButton = XboxController.Button.kX.value;
+    public static final int kShootButton = XboxController.Button.kLeftBumper.value;
+    public static final int kDropButton = XboxController.Button.kRightBumper.value;
   }
   
   public static class Arm{
     //Motors
-    public static final int kArm1 = 8;
-    public static final int kArm2 = 9;
+    public static final int kArmMotor1 = 8;
+    public static final int kArmMotor2 = 9;
+
+    //Encoders
+    public static final int kEncoderPin1 = 1;
+    public static final int kEncoderPin2 = 2;
+
+    //Limit switches
+    public static final int kMinLimit = 3;
+    public static final int kMaxLimit = 4;
+
+    //Positions
+    public static final double kDrivePosition = 50;
+    public static final double kPickupPosition = 10;
+    public static final double kShootPosition = 100;
+    public static final double kAmpPosition = 60;
   }
 }

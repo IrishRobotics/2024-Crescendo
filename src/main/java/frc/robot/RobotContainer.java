@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import frc.robot.Constants;
+import frc.robot.commands.Arm.DefaultArm;
 import frc.robot.commands.Drivetrain.OperatorDrive;
-import frc.robot.commands.Intake.IntakeNote;
-import frc.robot.commands.Shooter.DropNode;
-import frc.robot.commands.Shooter.ShootNote;
+import frc.robot.commands.Groups.AmpGroup;
+import frc.robot.commands.Groups.PickupGroup;
+import frc.robot.commands.Groups.ShootGroup;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -59,7 +59,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
-    
+    sArm.setDefaultCommand(new DefaultArm(sArm));
+
     // Configure the trigger bindings
     configureBindings();
   }
@@ -79,13 +80,13 @@ public class RobotContainer {
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
     inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
-    inputNoteTrigger.whileTrue(new IntakeNote(sIntake));
+    inputNoteTrigger.whileTrue(new PickupGroup(sArm, sIntake));
 
     shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootNote(sShooter, sIntake));
+    shootNoteTrigger.whileTrue(new ShootGroup(sArm, sShooter, sIntake));
 
     dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
-    dropNodeTrigger.whileTrue(new DropNode(sShooter, sIntake));
+    dropNodeTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
