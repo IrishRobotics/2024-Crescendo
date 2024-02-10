@@ -6,6 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants;
 import frc.robot.commands.Drivetrain.OperatorDrive;
+import frc.robot.commands.Intake.IntakeNote;
+import frc.robot.commands.Shooter.DropNode;
+import frc.robot.commands.Shooter.ShootNote;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -33,10 +36,14 @@ public class RobotContainer {
 
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
+  private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
 
   // Joystick Buttons
   
   private Trigger toggleGearBtn;
+  private Trigger inputNoteTrigger;
+  private Trigger shootNoteTrigger;
+  private Trigger dropNodeTrigger;
   // TODO - Add buttons
 
   // Auto Chooser
@@ -68,8 +75,17 @@ public class RobotContainer {
    */
   private void configureBindings() {
     
-    toggleGearBtn = new JoystickButton(mOpController, XboxController.Button.kStart.value);
+    toggleGearBtn = new JoystickButton(mOpController, Constants.OpConstants.GearButton);
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
+
+    inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
+    inputNoteTrigger.whileTrue(new IntakeNote(sIntake));
+
+    shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
+    shootNoteTrigger.whileTrue(new ShootNote(sShooter, sIntake));
+
+    dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
+    dropNodeTrigger.whileTrue(new DropNode(sShooter, sIntake));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

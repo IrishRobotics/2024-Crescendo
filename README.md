@@ -27,8 +27,8 @@ Drivetrain | SparkMax         | RightRear      | 4      |      |
 Intake     | TalonSRX         | Intake         | 5      |      |
 Shooter    | SparkMax         | ShooterTop     | 6      |      |
 Shooter    | SparkMax         | ShooterBottom  | 7      |      |
-Arm        | ?                | ArmMotor       | 8      |      |
-
+Arm        | ?                | ArmMotor1      | 8      |      |
+Arm        | ?                | ArmMotor2      | 9      |      |
 
 ## Code Highlights
 
@@ -70,9 +70,16 @@ P             | .5*`Ku`  | 0             | 0              |
 PI            | .45*`Ku` | .54*`Ku`/`Tu` | 0              |
 PID           | .6*`Ku`  | 1.2*`Ku`/`Tu` | 3*`Ku`*`Tu`/40 |
 
+## Other Conventions
+
+### Doubles
+
+Should have a postfix 0 (i.e. `0.1` not `.1`)
+
 ## Programmers
 
 ### Students
+[Nick](https://github.com/ngarnsworthy)<br/>
 
 ### Mentors
 [Nate](https://github.com/naterbots)<br/>

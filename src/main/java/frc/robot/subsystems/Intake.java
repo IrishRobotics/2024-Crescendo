@@ -4,18 +4,43 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  //private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(0);
+  //Motors
+  private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(Constants.IntakeConstants.kIntakeID);
+
+  //Sensors
+  private DigitalInput noteDetector = new DigitalInput(Constants.IntakeConstants.kNoteDetectorID);
 
   /** Creates a new Intake. */
-  public Intake() {}
+  public Intake() {
+    intakeMotor.setNeutralMode(NeutralMode.Brake);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void NoteIn(){
+    intakeMotor.set(Constants.IntakeConstants.kIntakeSpeed);
+  }
+
+  public void Stop(){
+    intakeMotor.set(0);
+  }
+
+  public void NoteOut(){
+    intakeMotor.set(-Constants.IntakeConstants.kIntakeSpeed);
+  }
+
+  public Boolean NoteDetected(){
+    return noteDetector.get();
   }
 }
