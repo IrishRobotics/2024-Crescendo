@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Drivetrain.Move;
+import frc.robot.subsystems.Drivetrain;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -18,10 +19,10 @@ public class MoveOut extends InstantCommand {
   private Command blueCommandSequence;
   private Command redCommandSequence;
 
-  public MoveOut() {
-    blueCommandSequence = Commands.sequence(new Move(3.75, 0));
+  public MoveOut(Drivetrain drivetrain) {
+    blueCommandSequence = Commands.sequence(new Move(3.75, 0, drivetrain));
 
-    redCommandSequence = Commands.sequence(new Move(3.75, 0));
+    redCommandSequence = Commands.sequence(new Move(3.75, 0, drivetrain));
   }
 
   // Called when the command is initially scheduled.
