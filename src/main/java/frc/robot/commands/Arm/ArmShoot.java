@@ -4,17 +4,20 @@
 
 package frc.robot.commands.Arm;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Vision;
 
 public class ArmShoot extends Command {
-private Arm sArm;
+  private Arm sArm;
+  private Vision sVision;
 
   /** Creates a new ArmShoot. */
-  public ArmShoot(Arm arm) {
+  public ArmShoot(Arm arm, Vision vision) {
     sArm = arm;
+    sVision = vision;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
@@ -23,6 +26,10 @@ private Arm sArm;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Transform3d tagPosition = sVision.TargetWithID(4).getBestCameraToTarget();
+
+    double distanceToTag = Math.sqrt(Math.pow(tagPosition.getX(), 2)+Math.pow(tagPosition.getY(), 2));
+
     sArm.setSetpoint(Constants.Arm.kShootPosition);
   }
 

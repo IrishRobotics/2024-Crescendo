@@ -4,11 +4,19 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,15 +33,46 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax mRearLeftMotor   = new CANSparkMax(Constants.OpConstants.kRearLeftID, MotorType.kBrushless);
   private CANSparkMax mRearRightMotor  = new CANSparkMax(Constants.OpConstants.kRearRightID, MotorType.kBrushless);
 
+  private Translation2d frontLeftTranslate = new Translation2d(0.26, 0.26);
+  private Translation2d frontRightTranslate = new Translation2d(0.26, -0.26);
+  private Translation2d rearLeftTranslate = new Translation2d(-0.26, 0.26);
+  private Translation2d rearRightTranslate = new Translation2d(-0.26, -0.26);
+
+  private MecanumDriveKinematics kinematics =
+    new MecanumDriveKinematics(
+      frontLeftTranslate, frontRightTranslate, rearLeftTranslate, rearRightTranslate);
+
+  private MecanumDriveOdometry odometry;
+  private Pose2d robotPose;
+  private Field2d field = new Field2d();
+
   //Menanum Drive
   private MecanumDrive mMecanumDrive = new MecanumDrive(mFrontLeftMotor, mRearLeftMotor, mFrontRightMotor, mRearRightMotor);
   
   /** Creates a new Drivetrain. */
-  public Drivetrain() {}
+  public Drivetrain() {
+    mFrontLeftMotor.setInverted(true);
+    mRearLeftMotor.setInverted(true);
+
+    robotPose = new Pose2d(0.0, 0.0, new Rotation2d()); // Inital pose of the robot
+    odometry = new MecanumDriveOdometry(kinematics, mNavx.getRotation2d(), new MecanumDriveWheelPositions(
+      mFrontLeftMotor.getEncoder().getPosition()*16*Math.PI, mFrontRightMotor.getEncoder().getPosition()*16*Math.PI,
+      mRearLeftMotor.getEncoder().getPosition()*16*Math.PI, mRearRightMotor.getEncoder().getPosition()*16*Math.PI
+    ), robotPose);
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    var wheelPositions = new MecanumDriveWheelPositions(
+      mFrontLeftMotor.getEncoder().getPosition()*16*Math.PI, mFrontRightMotor.getEncoder().getPosition()*16*Math.PI,
+      mRearLeftMotor.getEncoder().getPosition()*16*Math.PI, mRearRightMotor.getEncoder().getPosition()*16*Math.PI
+    );
+  
+    // Get the rotation of the robot from the gyro.
+    var gyroAngle = mNavx.getRotation2d();
+  
+    // Update the pose
+    robotPose = odometry.update(gyroAngle, wheelPositions);
   }
 
   public void ToggleGear() {

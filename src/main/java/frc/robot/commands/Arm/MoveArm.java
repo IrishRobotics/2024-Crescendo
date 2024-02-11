@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 
-public class DefaultArm extends Command {
-private Arm arm;
+public class MoveArm extends Command {
+private Arm sArm;
+private double position;
 
   /** Creates a new DefaultArm. */
-  public DefaultArm(Arm arm) {
-    this.arm = arm;
+  public MoveArm(Arm arm, double position) {
+    this.sArm = arm;
+    this.position = position;
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(arm);
@@ -22,7 +24,7 @@ private Arm arm;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setSetpoint(Constants.Arm.kDrivePosition);
+    sArm.setSetpoint(position);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,6 +38,6 @@ private Arm arm;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(sArm.getMeasurement()-sArm.getSetpoint())<.5;
   }
 }

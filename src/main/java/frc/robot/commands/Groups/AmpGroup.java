@@ -5,7 +5,8 @@
 package frc.robot.commands.Groups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Arm.ArmAmp;
+import frc.robot.Constants;
+import frc.robot.commands.Arm.MoveArm;
 import frc.robot.commands.Shooter.DropNote;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -19,6 +20,6 @@ public class AmpGroup extends SequentialCommandGroup {
   public AmpGroup(Arm arm, Shooter shooter, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ArmAmp(arm), new DropNote(shooter, intake));
+    addCommands(new MoveArm(arm, Constants.Arm.kAmpPosition), new DropNote(shooter, intake));
   }
 }

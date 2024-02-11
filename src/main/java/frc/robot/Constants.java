@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
  */
 public final class Constants {
   public static final int kDriverControllerPort = 0;
-  public static final int kCoopControllerPort = 2;
+  public static final int kCoopControllerPort = 1;
 
   public static class OpConstants {
     // Drivetrain Constants

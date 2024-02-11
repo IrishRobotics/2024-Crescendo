@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.commands.Arm.DefaultArm;
+import frc.robot.commands.Arm.MoveArm;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Groups.AmpGroup;
 import frc.robot.commands.Groups.PickupGroup;
@@ -13,6 +13,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +34,7 @@ public class RobotContainer {
   private Intake sIntake = new Intake();
   private Shooter sShooter = new Shooter();
   private Arm sArm  = new Arm();
+  private Vision sVision = new Vision();
 
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
@@ -59,7 +61,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
-    sArm.setDefaultCommand(new DefaultArm(sArm));
+    sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
 
     // Configure the trigger bindings
     configureBindings();
@@ -83,7 +85,7 @@ public class RobotContainer {
     inputNoteTrigger.whileTrue(new PickupGroup(sArm, sIntake));
 
     shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootGroup(sArm, sShooter, sIntake));
+    shootNoteTrigger.whileTrue(new ShootGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
     dropNodeTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));

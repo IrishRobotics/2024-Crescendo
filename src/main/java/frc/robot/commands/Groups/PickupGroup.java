@@ -5,7 +5,8 @@
 package frc.robot.commands.Groups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Arm.ArmPickup;
+import frc.robot.Constants;
+import frc.robot.commands.Arm.MoveArm;
 import frc.robot.commands.Intake.IntakeNote;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -18,6 +19,6 @@ public class PickupGroup extends SequentialCommandGroup {
   public PickupGroup(Arm arm, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ArmPickup(arm), new IntakeNote(intake));
+    addCommands(new MoveArm(arm, Constants.Arm.kPickupPosition), new IntakeNote(intake));
   }
 }

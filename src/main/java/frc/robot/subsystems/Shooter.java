@@ -21,6 +21,8 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     m_pidController1 = mShooterMotor1.getPIDController();
     m_pidController2 = mShooterMotor2.getPIDController();
+
+    mShooterMotor1.setInverted(true);
   }
 
   @Override
