@@ -9,6 +9,8 @@ import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Groups.DropNoteGroup;
 import frc.robot.commands.Groups.PickupNoteGroup;
 import frc.robot.commands.Groups.ShootNoteGroup;
+import frc.robot.commands.Intake.IntakeIn;
+import frc.robot.commands.Intake.IntakeOut;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -39,6 +41,7 @@ public class RobotContainer {
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
   private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
+  private XboxController mDEBUGController = new XboxController(Constants.kDEBUGControllerPost);
 
   // Joystick Buttons
   
@@ -46,6 +49,10 @@ public class RobotContainer {
   private Trigger inputNoteTrigger;
   private Trigger shootNoteTrigger;
   private Trigger dropNodeTrigger;
+
+  // DEBUG Buttons
+  private Trigger intakeInTrigger;
+  private Trigger intakeOutTrigger;
   // TODO - Add buttons
 
   // Auto Chooser
@@ -89,6 +96,13 @@ public class RobotContainer {
 
     dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
     dropNodeTrigger.whileTrue(new DropNoteGroup(sArm, sShooter, sIntake));
+
+    //DEBUG Commands
+    intakeInTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeInButton);
+    intakeInTrigger.whileTrue(new IntakeIn(sIntake));
+
+    intakeOutTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeOutButton);
+    intakeOutTrigger.whileTrue(new IntakeOut(sIntake));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
