@@ -84,5 +84,7 @@ public final class Constants {
     public static final int intakeOutButton = XboxController.Button.kB.value;
 
     public static final int armJoystick = XboxController.Axis.kRightY.value;
+
+    public static final int runShooterMotors = XboxController.Button.kX.value;
   }
 }

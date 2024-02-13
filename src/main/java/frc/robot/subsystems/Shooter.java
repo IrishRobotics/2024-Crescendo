@@ -30,9 +30,14 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  public void RunMotors(double speed){
+    mShooterMotor1.set(speed);
+    mShooterMotor2.set(speed);
+  }
+
   public void EnableShooter(boolean drop){
     m_pidController1.setReference(drop?Constants.Shooter.kShooter1RPM:Constants.Shooter.kDrop1RMP, CANSparkMax.ControlType.kVelocity);
-    m_pidController1.setReference(drop?Constants.Shooter.kShooter2RPM:Constants.Shooter.kDrop2RMP, CANSparkMax.ControlType.kVelocity);
+    m_pidController2.setReference(drop?Constants.Shooter.kShooter2RPM:Constants.Shooter.kDrop2RMP, CANSparkMax.ControlType.kVelocity);
   }
 
   public void StopShooter(){

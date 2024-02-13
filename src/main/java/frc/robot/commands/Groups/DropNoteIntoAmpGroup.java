@@ -15,9 +15,9 @@ import frc.robot.subsystems.Shooter;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DropNoteGroup extends SequentialCommandGroup {
+public class DropNoteIntoAmpGroup extends SequentialCommandGroup {
   /** Creates a new AmpGroup. */
-  public DropNoteGroup(Arm arm, Shooter shooter, Intake intake) {
+  public DropNoteIntoAmpGroup(Arm arm, Shooter shooter, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new MoveArm(arm, Constants.Arm.kAmpPosition), new DropNote(shooter, intake));
