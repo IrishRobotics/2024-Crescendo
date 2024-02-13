@@ -7,18 +7,19 @@ package frc.robot.commands.Groups;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.commands.Arm.MoveArm;
-import frc.robot.commands.Intake.IntakeNote;
+import frc.robot.commands.Shooter.DropNote;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PickupGroup extends SequentialCommandGroup {
-  /** Creates a new PickupGroup. */
-  public PickupGroup(Arm arm, Intake intake) {
+public class DropNoteGroup extends SequentialCommandGroup {
+  /** Creates a new AmpGroup. */
+  public DropNoteGroup(Arm arm, Shooter shooter, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new MoveArm(arm, Constants.Arm.kPickupPosition), new IntakeNote(intake));
+    addCommands(new MoveArm(arm, Constants.Arm.kAmpPosition), new DropNote(shooter, intake));
   }
 }

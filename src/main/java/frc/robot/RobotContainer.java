@@ -6,9 +6,9 @@ package frc.robot;
 
 import frc.robot.commands.Arm.MoveArm;
 import frc.robot.commands.Drivetrain.OperatorDrive;
-import frc.robot.commands.Groups.AmpGroup;
-import frc.robot.commands.Groups.PickupGroup;
-import frc.robot.commands.Groups.ShootGroup;
+import frc.robot.commands.Groups.DropNoteGroup;
+import frc.robot.commands.Groups.PickupNoteGroup;
+import frc.robot.commands.Groups.ShootNoteGroup;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -82,13 +82,13 @@ public class RobotContainer {
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
     inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
-    inputNoteTrigger.whileTrue(new PickupGroup(sArm, sIntake));
+    inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
 
     shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
-    dropNodeTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
+    dropNodeTrigger.whileTrue(new DropNoteGroup(sArm, sShooter, sIntake));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
