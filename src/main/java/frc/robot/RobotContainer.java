@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Arm.MoveArmFromController;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Groups.DropNoteGroup;
 import frc.robot.commands.Groups.PickupNoteGroup;
@@ -53,6 +54,7 @@ public class RobotContainer {
   // DEBUG Buttons
   private Trigger intakeInTrigger;
   private Trigger intakeOutTrigger;
+  private Trigger manualArmControlTrigger;
   // TODO - Add buttons
 
   // Auto Chooser
@@ -103,6 +105,9 @@ public class RobotContainer {
 
     intakeOutTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeOutButton);
     intakeOutTrigger.whileTrue(new IntakeOut(sIntake));
+
+    manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
+    manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
