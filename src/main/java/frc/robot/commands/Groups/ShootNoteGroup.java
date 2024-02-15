@@ -17,9 +17,9 @@ import frc.robot.subsystems.Vision;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ShootGroup extends SequentialCommandGroup {
+public class ShootNoteGroup extends SequentialCommandGroup {
   /** Creates a new Shoot. */
-  public ShootGroup(Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
+  public ShootNoteGroup(Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new PositionShoot(drivetrain, vision), new ArmShoot(arm, vision), new ShootNote(shooter, intake));

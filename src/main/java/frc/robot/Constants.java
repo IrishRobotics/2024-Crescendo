@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 public final class Constants {
   public static final int kDriverControllerPort = 0;
   public static final int kCoopControllerPort = 1;
+  public static final int kDEBUGControllerPost = 2;
 
   public static class OpConstants {
     // Drivetrain Constants
@@ -76,5 +77,14 @@ public final class Constants {
     public static final double kPickupPosition = 10;
     public static final double kShootPosition = 100;
     public static final double kAmpPosition = 60;
+  }
+
+  public static class DEBUG{
+    public static final int intakeInButton = XboxController.Button.kA.value;
+    public static final int intakeOutButton = XboxController.Button.kB.value;
+
+    public static final int armJoystick = XboxController.Axis.kRightY.value;
+
+    public static final int runShooterMotors = XboxController.Button.kX.value;
   }
 }

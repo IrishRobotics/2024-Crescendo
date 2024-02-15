@@ -5,10 +5,14 @@
 package frc.robot;
 
 import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Arm.MoveArmFromController;
 import frc.robot.commands.Drivetrain.OperatorDrive;
-import frc.robot.commands.Groups.AmpGroup;
-import frc.robot.commands.Groups.PickupGroup;
-import frc.robot.commands.Groups.ShootGroup;
+import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
+import frc.robot.commands.Groups.PickupNoteGroup;
+import frc.robot.commands.Groups.ShootNoteGroup;
+import frc.robot.commands.Intake.IntakeIn;
+import frc.robot.commands.Intake.IntakeOut;
+import frc.robot.commands.Shooter.RunShooterMotors;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
@@ -39,6 +43,7 @@ public class RobotContainer {
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
   private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
+  private XboxController mDEBUGController = new XboxController(Constants.kDEBUGControllerPost);
 
   // Joystick Buttons
   
@@ -46,6 +51,12 @@ public class RobotContainer {
   private Trigger inputNoteTrigger;
   private Trigger shootNoteTrigger;
   private Trigger dropNodeTrigger;
+
+  // DEBUG Buttons
+  private Trigger intakeInTrigger;
+  private Trigger intakeOutTrigger;
+  private Trigger manualArmControlTrigger;
+  private Trigger runShooter;
   // TODO - Add buttons
 
   // Auto Chooser
@@ -82,13 +93,26 @@ public class RobotContainer {
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
     inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
-    inputNoteTrigger.whileTrue(new PickupGroup(sArm, sIntake));
+    inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
 
     shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
-    dropNodeTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
+    dropNodeTrigger.whileTrue(new DropNoteIntoAmpGroup(sArm, sShooter, sIntake));
+
+    //DEBUG Commands
+    intakeInTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeInButton);
+    intakeInTrigger.whileTrue(new IntakeIn(sIntake));
+
+    intakeOutTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeOutButton);
+    intakeOutTrigger.whileTrue(new IntakeOut(sIntake));
+
+    manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
+    manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
+
+    runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
+    runShooter.whileTrue(new RunShooterMotors(sShooter, 0.5));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

@@ -43,8 +43,7 @@ public class Drivetrain extends SubsystemBase {
       frontLeftTranslate, frontRightTranslate, rearLeftTranslate, rearRightTranslate);
 
   private MecanumDriveOdometry odometry;
-  private Pose2d robotPose;
-  private Field2d field = new Field2d();
+  public Pose2d robotPose;
 
   //Menanum Drive
   private MecanumDrive mMecanumDrive = new MecanumDrive(mFrontLeftMotor, mRearLeftMotor, mFrontRightMotor, mRearRightMotor);

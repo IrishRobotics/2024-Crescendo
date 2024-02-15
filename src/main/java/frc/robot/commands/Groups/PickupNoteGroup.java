@@ -14,9 +14,9 @@ import frc.robot.subsystems.Intake;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PickupGroup extends SequentialCommandGroup {
+public class PickupNoteGroup extends SequentialCommandGroup {
   /** Creates a new PickupGroup. */
-  public PickupGroup(Arm arm, Intake intake) {
+  public PickupNoteGroup(Arm arm, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new MoveArm(arm, Constants.Arm.kPickupPosition), new IntakeNote(intake));
