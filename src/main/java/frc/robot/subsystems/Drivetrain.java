@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -52,6 +53,12 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     mFrontLeftMotor.setInverted(true);
     mRearLeftMotor.setInverted(true);
+
+    mFrontLeftMotor.setIdleMode(IdleMode.kBrake);
+    mFrontRightMotor.setIdleMode(IdleMode.kBrake);
+    mRearLeftMotor.setIdleMode(IdleMode.kBrake);
+    mRearRightMotor.setIdleMode(IdleMode.kBrake);
+
 
     robotPose = new Pose2d(0.0, 0.0, new Rotation2d()); // Inital pose of the robot
     odometry = new MecanumDriveOdometry(kinematics, mNavx.getRotation2d(), new MecanumDriveWheelPositions(
