@@ -25,7 +25,7 @@ public final class Constants {
     public static final int kFrontRightID = 2;
     public static final int kRearLeftID = 3;
     public static final int kRearRightID = 4;
-    public static final double kHighGear = 1;
+    public static final double kHighGear = 0.8;
     public static final double kLowGear = 0.6;
     public static final double kMaxSpeed = 0.8;
 

@@ -20,7 +20,7 @@ public class ArmReset extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    sArm.setSetpoint(-1000);
+    // sArm.setSetpoint(-1000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,10 +34,11 @@ public class ArmReset extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(sArm.encoderReset){
-      sArm.encoderReset = false;
-      return true;
-    }
     return false;
+    // if(sArm.encoderReset){
+    //   sArm.encoderReset = false;
+    //   return true;
+    // }
+    // return false;
   }
 }

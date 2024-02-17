@@ -24,7 +24,7 @@ private double position;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    sArm.setSetpoint(position);
+    // sArm.setSetpoint(position);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,6 +38,7 @@ private double position;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(sArm.getMeasurement()-sArm.getSetpoint())<.5;
+    return false;
+    // return Math.abs(sArm.getMeasurement()-sArm.getSetpoint())<.5;
   }
 }

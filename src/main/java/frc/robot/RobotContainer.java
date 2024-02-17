@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import frc.robot.commands.Arm.ArmDown;
+import frc.robot.commands.Arm.ArmUp;
 import frc.robot.commands.Arm.MoveArm;
 import frc.robot.commands.Arm.MoveArmFromController;
+import frc.robot.commands.Automatic.MoveOut;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
 import frc.robot.commands.Groups.PickupNoteGroup;
@@ -55,7 +58,8 @@ public class RobotContainer {
   // DEBUG Buttons
   private Trigger intakeInTrigger;
   private Trigger intakeOutTrigger;
-  private Trigger manualArmControlTrigger;
+  private Trigger armUpTrigger;
+  private Trigger armDownTrigger;
   private Trigger runShooter;
   // TODO - Add buttons
 
@@ -73,6 +77,8 @@ public class RobotContainer {
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
     sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
+
+    autoSelect.setDefaultOption("Move out", new MoveOut(sDrivetrain));
 
     // Configure the trigger bindings
     configureBindings();
@@ -108,11 +114,18 @@ public class RobotContainer {
     intakeOutTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeOutButton);
     intakeOutTrigger.whileTrue(new IntakeOut(sIntake));
 
-    manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
-    manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
+    // manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
+    // manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
+    armUpTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kRightBumper.value);
+    armUpTrigger.whileTrue(new ArmUp(sArm));
+
+    armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
+    armDownTrigger.whileTrue(new ArmDown(sArm));
+
+
 
     runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
-    runShooter.whileTrue(new RunShooterMotors(sShooter, 0.5));
+    runShooter.whileTrue(new RunShooterMotors(sShooter,1));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

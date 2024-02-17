@@ -4,32 +4,28 @@
 
 package frc.robot.commands.Arm;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 
-public class MoveArmFromController extends Command {
+public class ArmUp extends Command {
   private Arm sArm;
-  private XboxController controller;
-
-  /** Creates a new MoveArmFromController. */
-  public MoveArmFromController(Arm arm, XboxController controller) {
-    sArm = arm;
-    this.controller = controller;
+  /** Creates a new ArmUpo. */
+  public ArmUp(Arm sArm) {
+  this.sArm = sArm;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(arm);
+    addRequirements(sArm);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    sArm.Move(0.5);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    sArm.Move(controller.getRawAxis(Constants.DEBUG.armJoystick));
-  }
+    sArm.Move(0.5);}
 
   // Called once the command ends or is interrupted.
   @Override

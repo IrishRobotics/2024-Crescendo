@@ -91,9 +91,9 @@ public class Drivetrain extends SubsystemBase {
 
   public void Drive(double x, double y, double turn, boolean fieldRelitave){
     if(fieldRelitave){
-      mMecanumDrive.driveCartesian(x*speedValue, y*speedValue, turn*speedValue, mNavx.getRotation2d());
+      mMecanumDrive.driveCartesian(x*Math.abs(x)*speedValue, y*Math.abs(y)*speedValue, turn*Math.abs(turn)*speedValue, mNavx.getRotation2d());
     }else{
-      mMecanumDrive.driveCartesian(x*speedValue, y*speedValue, turn*speedValue);
+      mMecanumDrive.driveCartesian(x*Math.abs(x)*speedValue, y*Math.abs(y)*speedValue, turn*Math.abs(turn)*speedValue);
     }
   }
 }

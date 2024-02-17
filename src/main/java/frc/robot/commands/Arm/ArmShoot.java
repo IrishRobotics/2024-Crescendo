@@ -5,6 +5,7 @@
 package frc.robot.commands.Arm;
 
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.proto.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
@@ -29,8 +30,11 @@ public class ArmShoot extends Command {
     Transform3d tagPosition = sVision.TargetWithID(4).getBestCameraToTarget();
 
     double distanceToTag = Math.sqrt(Math.pow(tagPosition.getX(), 2)+Math.pow(tagPosition.getY(), 2));
+    
 
-    sArm.setSetpoint(Constants.Arm.kShootPosition);
+
+
+    // sArm.setSetpoint(Constants.Arm.kShootPosition);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,6 +48,7 @@ public class ArmShoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(sArm.getMeasurement()-sArm.getSetpoint())<.5;
+    return false;
+    // return Math.abs(sArm.getMeasurement()-sArm.getSetpoint())<.5;
   }
 }

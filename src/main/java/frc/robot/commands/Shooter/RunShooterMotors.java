@@ -23,6 +23,7 @@ public class RunShooterMotors extends Command {
   @Override
   public void initialize() {
     sShooter.RunMotors(speed);
+    System.out.print("Shooting");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
