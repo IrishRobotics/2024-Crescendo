@@ -9,20 +9,24 @@ import frc.robot.commands.Arm.ArmUp;
 import frc.robot.commands.Arm.MoveArm;
 import frc.robot.commands.Arm.MoveArmFromController;
 import frc.robot.commands.Automatic.MoveOut;
+import frc.robot.commands.Drivetrain.DumbMove;
 import frc.robot.commands.Drivetrain.OperatorDrive;
+import frc.robot.commands.Drivetrain.PotatoAuto;
 import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
 import frc.robot.commands.Groups.PickupNoteGroup;
-import frc.robot.commands.Groups.ShootNoteGroup;
+// import frc.robot.commands.Groups.ShootNoteGroup;
 import frc.robot.commands.Intake.IntakeIn;
 import frc.robot.commands.Intake.IntakeOut;
 import frc.robot.commands.Shooter.RunShooterMotors;
+import frc.robot.commands.Shooter.ShootNote;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
+// import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -41,11 +45,11 @@ public class RobotContainer {
   private Intake sIntake = new Intake();
   private Shooter sShooter = new Shooter();
   private Arm sArm  = new Arm();
-  private Vision sVision = new Vision();
+  // private Vision sVision = new Vision();
 
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
-  private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
+  // private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
   private XboxController mDEBUGController = new XboxController(Constants.kDEBUGControllerPost);
 
   // Joystick Buttons
@@ -78,7 +82,10 @@ public class RobotContainer {
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
     sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
 
-    autoSelect.setDefaultOption("Move out", new MoveOut(sDrivetrain));
+    // autoSelect.setDefaultOption("Move out", new MoveOut(sDrivetrain));
+    autoSelect.setDefaultOption("Nothing", null);
+    autoSelect.addOption("Move",new PotatoAuto(sDrivetrain) );
+
 
     // Configure the trigger bindings
     configureBindings();
@@ -98,14 +105,14 @@ public class RobotContainer {
     toggleGearBtn = new JoystickButton(mOpController, Constants.OpConstants.GearButton);
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
-    inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
-    inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
+    // inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
+    // inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
 
-    shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    // // shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
+    // // shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
-    dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
-    dropNodeTrigger.whileTrue(new DropNoteIntoAmpGroup(sArm, sShooter, sIntake));
+    // dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
+    // dropNodeTrigger.whileTrue(new DropNoteIntoAmpGroup(sArm, sShooter, sIntake));
 
     //DEBUG Commands
     intakeInTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeInButton);
@@ -123,13 +130,16 @@ public class RobotContainer {
     armDownTrigger.whileTrue(new ArmDown(sArm));
 
 
-
-    runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
+    runShooter = new Trigger(() -> mDEBUGController.getLeftTriggerAxis()>0.25);
+    // runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
     runShooter.whileTrue(new RunShooterMotors(sShooter,1));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    SmartDashboard.putData(new ShootNote(sShooter,sIntake));
+
+    SmartDashboard.putData(autoSelect);
   }
 
   
@@ -139,7 +149,9 @@ public class RobotContainer {
    * Use this to pass the autonomous command to the main {@link Robot} class.
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {return autoSelect.getSelected();  }
+  public Command getAutonomousCommand() {
+    return autoSelect.getSelected();
+    }
   public Drivetrain getDrivetrain(){return sDrivetrain;}
   public Intake getIntake(){return sIntake;}
   public Shooter getShooter(){return sShooter;}
