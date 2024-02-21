@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -34,6 +35,11 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax mRearLeftMotor   = new CANSparkMax(Constants.OpConstants.kRearLeftID, MotorType.kBrushless);
   private CANSparkMax mRearRightMotor  = new CANSparkMax(Constants.OpConstants.kRearRightID, MotorType.kBrushless);
 
+  private RelativeEncoder mFrontLeftEncoder  = mFrontLeftMotor.getEncoder();
+  private RelativeEncoder mFrontRightEncoder = mFrontRightMotor.getEncoder();
+  private RelativeEncoder mRearLeftEncoder   = mRearLeftMotor.getEncoder();
+  private RelativeEncoder mRearRightEncoder  = mRearRightMotor.getEncoder();
+
   private Translation2d frontLeftTranslate = new Translation2d(0.26, 0.26);
   private Translation2d frontRightTranslate = new Translation2d(0.26, -0.26);
   private Translation2d rearLeftTranslate = new Translation2d(-0.26, 0.26);
@@ -57,21 +63,29 @@ public class Drivetrain extends SubsystemBase {
     mFrontLeftMotor.setIdleMode(IdleMode.kBrake);
     mFrontRightMotor.setIdleMode(IdleMode.kBrake);
     mRearLeftMotor.setIdleMode(IdleMode.kBrake);
-    mRearRightMotor.setIdleMode(IdleMode.kBrake);
+    mRearRightMotor.setIdleMode(IdleMode.kCoast);
 
+    double countsPerRev = 42;
+    double conversionFactor = 1;
+    mFrontLeftEncoder.setPositionConversionFactor(conversionFactor);
+    mFrontRightEncoder.setPositionConversionFactor(conversionFactor);
+    mRearLeftEncoder.setPositionConversionFactor(conversionFactor);
+    mRearRightEncoder.setPositionConversionFactor(conversionFactor);
 
     robotPose = new Pose2d(0.0, 0.0, new Rotation2d()); // Inital pose of the robot
     odometry = new MecanumDriveOdometry(kinematics, mNavx.getRotation2d(), new MecanumDriveWheelPositions(
-      mFrontLeftMotor.getEncoder().getPosition()*16*Math.PI, mFrontRightMotor.getEncoder().getPosition()*16*Math.PI,
-      mRearLeftMotor.getEncoder().getPosition()*16*Math.PI, mRearRightMotor.getEncoder().getPosition()*16*Math.PI
+      mFrontLeftMotor.getEncoder().getPosition(), mFrontRightMotor.getEncoder().getPosition(),
+      mRearLeftMotor.getEncoder().getPosition(), mRearRightMotor.getEncoder().getPosition()
     ), robotPose);
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Test motor movement", mRearRightMotor.getEncoder().getPosition());
+
     var wheelPositions = new MecanumDriveWheelPositions(
-      mFrontLeftMotor.getEncoder().getPosition()*16*Math.PI, mFrontRightMotor.getEncoder().getPosition()*16*Math.PI,
-      mRearLeftMotor.getEncoder().getPosition()*16*Math.PI, mRearRightMotor.getEncoder().getPosition()*16*Math.PI
+      mFrontLeftMotor.getEncoder().getPosition(), mFrontRightMotor.getEncoder().getPosition(),
+      mRearLeftMotor.getEncoder().getPosition(), mRearRightMotor.getEncoder().getPosition()
     );
   
     // Get the rotation of the robot from the gyro.

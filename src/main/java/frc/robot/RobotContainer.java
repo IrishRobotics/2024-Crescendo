@@ -4,10 +4,10 @@
 
 package frc.robot;
 
-import frc.robot.commands.Arm.ArmDown;
-import frc.robot.commands.Arm.ArmUp;
+// import frc.robot.commands.Arm.ArmDown;
+// import frc.robot.commands.Arm.ArmUp;
 import frc.robot.commands.Arm.MoveArm;
-import frc.robot.commands.Arm.MoveArmFromController;
+// import frc.robot.commands.Arm.MoveArmFromController;
 import frc.robot.commands.Automatic.MoveOut;
 import frc.robot.commands.Drivetrain.DumbMove;
 import frc.robot.commands.Drivetrain.OperatorDrive;
@@ -123,11 +123,11 @@ public class RobotContainer {
 
     // manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
     // manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
-    armUpTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kRightBumper.value);
-    armUpTrigger.whileTrue(new ArmUp(sArm));
+    // armUpTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kRightBumper.value);
+    // armUpTrigger.whileTrue(new ArmUp(sArm));
 
-    armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
-    armDownTrigger.whileTrue(new ArmDown(sArm));
+    // armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
+    // armDownTrigger.whileTrue(new ArmDown(sArm));
 
 
     runShooter = new Trigger(() -> mDEBUGController.getLeftTriggerAxis()>0.25);
