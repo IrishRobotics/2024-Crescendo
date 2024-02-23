@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
-  PhotonCamera camera = new PhotonCamera("frontcamera");
+  PhotonCamera camera = new PhotonCamera("shootingSideCamera");
   
   /** Creates a new Vision. */
   public Vision() {}
