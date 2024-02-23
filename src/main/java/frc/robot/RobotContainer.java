@@ -23,7 +23,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-// import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,7 +45,7 @@ public class RobotContainer {
   private Intake sIntake = new Intake();
   private Shooter sShooter = new Shooter();
   private Arm sArm  = new Arm();
-  // private Vision sVision = new Vision();
+  private Vision sVision = new Vision();
 
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);

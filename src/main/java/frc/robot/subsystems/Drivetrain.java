@@ -63,14 +63,14 @@ public class Drivetrain extends SubsystemBase {
     mFrontLeftMotor.setIdleMode(IdleMode.kBrake);
     mFrontRightMotor.setIdleMode(IdleMode.kBrake);
     mRearLeftMotor.setIdleMode(IdleMode.kBrake);
-    mRearRightMotor.setIdleMode(IdleMode.kCoast);
+    mRearRightMotor.setIdleMode(IdleMode.kBrake);
 
     double countsPerRev = 42;
-    double conversionFactor = 1;
-    mFrontLeftEncoder.setPositionConversionFactor(conversionFactor);
-    mFrontRightEncoder.setPositionConversionFactor(conversionFactor);
-    mRearLeftEncoder.setPositionConversionFactor(conversionFactor);
-    mRearRightEncoder.setPositionConversionFactor(conversionFactor);
+    double conversionFactor = 4 * 64 * Math.PI; //1:4 gearbox plus 8in wheels
+    mFrontLeftEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
+    mFrontRightEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
+    mRearLeftEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
+    mRearRightEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
 
     robotPose = new Pose2d(0.0, 0.0, new Rotation2d()); // Inital pose of the robot
     odometry = new MecanumDriveOdometry(kinematics, mNavx.getRotation2d(), new MecanumDriveWheelPositions(
