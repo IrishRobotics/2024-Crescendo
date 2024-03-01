@@ -44,6 +44,6 @@ public class Intake extends SubsystemBase {
   }
 
   public Boolean NoteDetected(){
-    return noteDetector.get();
+    return !noteDetector.get();
   }
 }

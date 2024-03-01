@@ -4,18 +4,19 @@
 
 package frc.robot;
 
-// import frc.robot.commands.Arm.ArmDown;
-// import frc.robot.commands.Arm.ArmUp;
-import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Arm.ArmDown;
+import frc.robot.commands.Arm.ArmUp;
+// import frc.robot.commands.Arm.MoveArm;
 // import frc.robot.commands.Arm.MoveArmFromController;
 import frc.robot.commands.Automatic.MoveOut;
 import frc.robot.commands.Drivetrain.DumbMove;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Drivetrain.PotatoAuto;
-import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
-import frc.robot.commands.Groups.PickupNoteGroup;
+// import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
+// import frc.robot.commands.Groups.PickupNoteGroup;
 // import frc.robot.commands.Groups.ShootNoteGroup;
 import frc.robot.commands.Intake.IntakeIn;
+import frc.robot.commands.Intake.IntakeNote;
 import frc.robot.commands.Intake.IntakeOut;
 import frc.robot.commands.Shooter.RunShooterMotors;
 import frc.robot.commands.Shooter.ShootNote;
@@ -80,7 +81,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
-    sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
+    // sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
 
     // autoSelect.setDefaultOption("Move out", new MoveOut(sDrivetrain));
     autoSelect.setDefaultOption("Nothing", null);
@@ -116,18 +117,19 @@ public class RobotContainer {
 
     //DEBUG Commands
     intakeInTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeInButton);
-    intakeInTrigger.whileTrue(new IntakeIn(sIntake));
+    //intakeInTrigger.whileTrue(new IntakeIn(sIntake));
+    intakeInTrigger.whileTrue(new IntakeNote(sIntake)); 
 
     intakeOutTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeOutButton);
     intakeOutTrigger.whileTrue(new IntakeOut(sIntake));
 
     // manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
     // manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
-    // armUpTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kRightBumper.value);
-    // armUpTrigger.whileTrue(new ArmUp(sArm));
+    armUpTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kRightBumper.value);
+    armUpTrigger.whileTrue(new ArmUp(sArm));
 
-    // armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
-    // armDownTrigger.whileTrue(new ArmDown(sArm));
+    armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
+    armDownTrigger.whileTrue(new ArmDown(sArm));
 
 
     runShooter = new Trigger(() -> mDEBUGController.getLeftTriggerAxis()>0.25);
