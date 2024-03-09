@@ -36,7 +36,7 @@ public final class Constants {
   public static class IntakeConstants{
     //Motors
     public static final int kIntakeID = 5;
-    public static final double kIntakeSpeed = 0.5;
+    public static final double kIntakeSpeed = 0.6;
 
     //Sensors
     public static final int kNoteDetectorID = 0;

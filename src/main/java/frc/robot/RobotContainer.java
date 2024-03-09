@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.Arm.ArmDown;
 import frc.robot.commands.Arm.ArmUp;
+import frc.robot.commands.Arm.MoveArm;
 // import frc.robot.commands.Arm.MoveArm;
 // import frc.robot.commands.Arm.MoveArmFromController;
 import frc.robot.commands.Automatic.MoveOut;
@@ -66,6 +67,9 @@ public class RobotContainer {
   private Trigger armUpTrigger;
   private Trigger armDownTrigger;
   private Trigger runShooter;
+
+  private Trigger armUpPreset;
+  private Trigger armDownPreset;
   // TODO - Add buttons
 
   // Auto Chooser
@@ -132,9 +136,18 @@ public class RobotContainer {
     armDownTrigger.whileTrue(new ArmDown(sArm));
 
 
-    runShooter = new Trigger(() -> mDEBUGController.getLeftTriggerAxis()>0.25);
-    // runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
+
+
+    //runShooter = new Trigger(() -> mDEBUGController.getLeftTriggerAxis()>0.25);
+    runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
     runShooter.whileTrue(new RunShooterMotors(sShooter,1));
+
+
+    armUpPreset = new JoystickButton(mDEBUGController, XboxController.Button.kBack.value);
+    armUpPreset.onTrue(new MoveArm(sArm,20));
+
+    armDownPreset = new JoystickButton(mDEBUGController,XboxController.Button.kStart.value);
+    armDownPreset.onTrue(new MoveArm(sArm,8));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

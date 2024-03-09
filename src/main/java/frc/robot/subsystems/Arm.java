@@ -16,8 +16,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -86,15 +91,20 @@ import frc.robot.Constants;
 
 public class Arm extends SubsystemBase{
   public WPI_TalonSRX mMotor1 = new WPI_TalonSRX(Constants.Arm.kArmMotor1);
-  
+  public DutyCycleEncoder angleSensor = new DutyCycleEncoder(1);
+  //private double position;
+
   /** Creates a new Arm. */
   public Arm() {
     mMotor1.setNeutralMode(NeutralMode.Brake);
+
+    angleSensor.setPositionOffset((90)/360);
+    angleSensor.reset();
   }
 
   @Override
   public void periodic() {
-
+    SmartDashboard.putString("Arm Position", String.valueOf(GetAngle()));
   }
 
   public void Move(double speed){
@@ -103,5 +113,9 @@ public class Arm extends SubsystemBase{
 
   public void Stop(){
     mMotor1.set(0);
+  }
+
+  public double GetAngle(){
+    return (angleSensor.getAbsolutePosition()*360+10)%360;
   }
 }
