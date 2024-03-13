@@ -8,6 +8,11 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.WPIMathJNI;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.proto.Wpimath;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -24,6 +29,7 @@ public class Vision extends SubsystemBase {
 
     for (PhotonTrackedTarget target : rawResult.targets) {
         SmartDashboard.putString("Target: "+target.getFiducialId(), target.getBestCameraToTarget().toString());
+        SmartDashboard.putNumber("Target Distance: "+ target.getFiducialId(), GetDistanceToTargetFlat(target.getFiducialId()));
     }
   }
 
@@ -35,5 +41,12 @@ public class Vision extends SubsystemBase {
     }
 
     return null;
+  }
+
+  public double GetDistanceToTargetFlat(int id){
+    PhotonTrackedTarget target = TargetWithID(id);
+    Translation3d position = target.getBestCameraToTarget().getTranslation();
+    double hyp = Math.sqrt(Math.pow(position.getX(),2)+Math.pow(position.getZ(),2)+Math.pow(position.getY(),2));
+    return hyp*Math.cos(Math.toRadians(29.5));
   }
 }
