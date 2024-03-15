@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Arm.ArmDown;
+import frc.robot.commands.Arm.VisionAim;
 import frc.robot.commands.Arm.ArmUp;
 import frc.robot.commands.Arm.MoveArm;
 // import frc.robot.commands.Arm.MoveArm;
@@ -13,6 +14,7 @@ import frc.robot.commands.Automatic.MoveOut;
 import frc.robot.commands.Drivetrain.DumbMove;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Drivetrain.PotatoAuto;
+import frc.robot.commands.Groups.ShootNoteGroup;
 // import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
 // import frc.robot.commands.Groups.PickupNoteGroup;
 // import frc.robot.commands.Groups.ShootNoteGroup;
@@ -51,7 +53,7 @@ public class RobotContainer {
 
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
-  // private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
+  private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
   private XboxController mDEBUGController = new XboxController(Constants.kDEBUGControllerPost);
 
   // Joystick Buttons
@@ -62,6 +64,7 @@ public class RobotContainer {
   private Trigger dropNodeTrigger;
 
   // DEBUG Buttons
+  private Trigger moveArmToShoot;
   private Trigger intakeInTrigger;
   private Trigger intakeOutTrigger;
   private Trigger armUpTrigger;
@@ -113,8 +116,8 @@ public class RobotContainer {
     // inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
     // inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
 
-    // // shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    // // shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     // dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
     // dropNodeTrigger.whileTrue(new DropNoteIntoAmpGroup(sArm, sShooter, sIntake));
@@ -135,12 +138,13 @@ public class RobotContainer {
     armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
     armDownTrigger.whileTrue(new ArmDown(sArm));
 
-
-
+    moveArmToShoot = new JoystickButton(mDEBUGController, XboxController.Button.kY.value);
+    moveArmToShoot.onTrue(new VisionAim(sArm, sVision));
 
     //runShooter = new Trigger(() -> mDEBUGController.getLeftTriggerAxis()>0.25);
     runShooter = new JoystickButton(mDEBUGController, Constants.DEBUG.runShooterMotors);
-    runShooter.whileTrue(new RunShooterMotors(sShooter,1));
+    runShooter.whileTrue(new ShootNote(sShooter, sIntake));
+
 
 
     armUpPreset = new JoystickButton(mDEBUGController, XboxController.Button.kBack.value);

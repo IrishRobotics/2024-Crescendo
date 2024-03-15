@@ -26,42 +26,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-// import frc.robot.commands.Arm.ArmReset;
 
 // public class Arm extends PIDSubsystem {
-//   public Encoder mEncoder = new Encoder(Constants.Arm.kEncoderPin1, Constants.Arm.kEncoderPin2);
-
-//   public WPI_TalonSRX mMotor1 = new WPI_TalonSRX(Constants.Arm.kArmMotor1);
-//   public WPI_TalonSRX mMotor2 = new WPI_TalonSRX(Constants.Arm.kArmMotor2);
-
-//   public DigitalInput mMinLimit = new DigitalInput(Constants.Arm.kMinLimit);
-//   public DigitalInput mMaxLimit = new DigitalInput(Constants.Arm.kMaxLimit);
+//   public DutyCycleEncoder angleSensor = new DutyCycleEncoder(1);
+//   public WPI_TalonSRX mMotor = new WPI_TalonSRX(Constants.Arm.kArmMotor1);
 
 //   /** Creates a new Arm. */
 //   public Arm() {
 //     super(
-//         // The PIDController used by the subsystem
-//         new PIDController(0, 0, 0));
+//       // The PIDController used by the subsystem
+//       new PIDController(0.5, 0, 0));
 
-//     mEncoder.setDistancePerPulse(.5);// TODO get value
+//     mMotor.setNeutralMode(NeutralMode.Brake);
 
-//     mMotor2.follow(mMotor1);
+//     angleSensor.setPositionOffset((90)/360);
 //   }
 
 //   public boolean encoderReset = false;
   
 //   @Override public void periodic() {
-//     if(atMin()){
-//       mEncoder.reset();
-//       encoderReset = true;
-//     }
-//     if(atMax()){
-//       this.disable();
-//     }else{
-//       this.enable();
-//     }
-
-//     super.periodic();
+//     SmartDashboard.putString("Arm Position", String.valueOf(GetAngle()));
 //   }
 
 //   @Override
@@ -76,16 +60,8 @@ import frc.robot.Constants;
 //     return mEncoder.getDistance();
 //   }
 
-//   public void resetEncoder(){
-//     mEncoder.reset();
-//   }
-
-//   private boolean atMax(){
-//     return mMaxLimit.get();
-//   }
-
-//   private boolean atMin(){
-//     return mMinLimit.get();
+//   public double GetAngle(){
+//     return (angleSensor.getAbsolutePosition()*360+10)%360;
 //   }
 // }
 
@@ -99,7 +75,6 @@ public class Arm extends SubsystemBase{
     mMotor1.setNeutralMode(NeutralMode.Brake);
 
     angleSensor.setPositionOffset((90)/360);
-    angleSensor.reset();
   }
 
   @Override
@@ -116,6 +91,6 @@ public class Arm extends SubsystemBase{
   }
 
   public double GetAngle(){
-    return (angleSensor.getAbsolutePosition()*360+10)%360;
+    return (angleSensor.getAbsolutePosition()*360+2)%360;
   }
 }

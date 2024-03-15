@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Shooter;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -24,13 +25,18 @@ public class ShootNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    SmartDashboard.putString("Shooting status", "Starting shooter");
     sShooter.EnableShooter(false);
-    // sIntake.NoteIn();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() { /* No update code to run. */}
+  public void execute() {
+    if(sShooter.getSpeed()>5200){
+      sIntake.NoteIn();
+      SmartDashboard.putString("Shooting status", "Shooting note");
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

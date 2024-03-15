@@ -54,12 +54,16 @@ public class Shooter extends SubsystemBase {
   public void EnableShooter(boolean drop){
     // m_pidController1.setReference(drop?Constants.Shooter.kShooter1RPM:Constants.Shooter.kDrop1RMP, CANSparkMax.ControlType.kVelocity);
     // m_pidController2.setReference(drop?Constants.Shooter.kShooter2RPM:Constants.Shooter.kDrop2RMP, CANSparkMax.ControlType.kVelocity);
-  m_pidController1.setReference(3500*(42/18),ControlType.kVelocity);
-  m_pidController2.setReference(3500,ControlType.kVelocity);
+  m_pidController1.setReference(5300,ControlType.kVelocity);
+  m_pidController2.setReference(5300,ControlType.kVelocity);
   }
 
   public void StopShooter(){
     mShooterMotor1.stopMotor();
     mShooterMotor2.stopMotor();
+  }
+
+  public double getSpeed() {
+    return (mShooterMotor1.getEncoder().getVelocity()+mShooterMotor2.getEncoder().getVelocity())/2;
   }
 }

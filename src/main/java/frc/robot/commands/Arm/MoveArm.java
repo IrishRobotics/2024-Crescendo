@@ -21,7 +21,7 @@ private PIDController pidController;
 
     pidController = new PIDController(0.5, 0, 0);
     pidController.setSetpoint(position);
-    pidController.setTolerance(2);
+    pidController.setTolerance(0.5);
 
     // Use addRequirements() here to declare subsystem dependencies.
 
@@ -37,9 +37,9 @@ private PIDController pidController;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double setSpeed =    pidController.calculate(sArm.GetAngle(),position);
-    if(sArm.GetAngle()>90||sArm.GetAngle()<5){
-        sArm.Move(0);
+    double setSpeed = pidController.calculate(sArm.GetAngle(),position);
+    if((sArm.GetAngle()>90&&setSpeed>0)||(sArm.GetAngle()<5&&setSpeed<0)){
+      sArm.Move(0);
     }else{
         sArm.Move(setSpeed);
     }
