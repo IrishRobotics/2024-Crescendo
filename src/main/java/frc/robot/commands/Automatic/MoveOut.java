@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Automatic;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,9 +21,9 @@ public class MoveOut extends InstantCommand {
   private Command redCommandSequence;
 
   public MoveOut(Drivetrain drivetrain) {
-    blueCommandSequence = Commands.sequence(new Move(1, 0, drivetrain));
+    blueCommandSequence = Commands.sequence(new Move(new Pose2d(1, 0, null), drivetrain));
 
-    redCommandSequence = Commands.sequence(new Move(1, 0, drivetrain));
+    redCommandSequence = Commands.sequence(new Move(new Pose2d(1, 0, null), drivetrain));
   }
 
   // Called when the command is initially scheduled.

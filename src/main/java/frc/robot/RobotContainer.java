@@ -105,7 +105,8 @@ public class RobotContainer {
 
     // autoSelect.setDefaultOption("Move out", new MoveOut(sDrivetrain));
     autoSelect.setDefaultOption("Nothing", null);
-    autoSelect.addOption("Move",new PotatoAuto(sDrivetrain) );
+    autoSelect.addOption("Potato Move",new PotatoAuto(sDrivetrain) );
+    autoSelect.addOption("Move Out", new MoveOut(sDrivetrain));
 
 
     // Configure the trigger bindings
