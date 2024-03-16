@@ -4,6 +4,8 @@
 
 package frc.robot.commands.Groups;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Arm.VisionAim;
@@ -23,6 +25,7 @@ public class ShootNoteGroup extends SequentialCommandGroup {
   public ShootNoteGroup(Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new PositionShoot(drivetrain, vision), new VisionAim(arm, vision),new WaitCommand(0.5),new ShootNote(shooter, intake));
+    
+    addCommands(new PositionShoot(drivetrain, vision), new VisionAim(arm, vision),new WaitCommand(1),new ShootNote(shooter, intake));
   }
 }

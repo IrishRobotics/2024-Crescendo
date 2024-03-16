@@ -14,6 +14,7 @@ import frc.robot.commands.Automatic.MoveOut;
 import frc.robot.commands.Drivetrain.DumbMove;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Drivetrain.PotatoAuto;
+import frc.robot.commands.Groups.PickupNoteGroup;
 import frc.robot.commands.Groups.ShootNoteGroup;
 // import frc.robot.commands.Groups.DropNoteIntoAmpGroup;
 // import frc.robot.commands.Groups.PickupNoteGroup;
@@ -113,14 +114,15 @@ public class RobotContainer {
     toggleGearBtn = new JoystickButton(mOpController, Constants.OpConstants.GearButton);
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
-    // inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
-    // inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
+    inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
+    inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
+    inputNoteTrigger.onFalse(new MoveArm(sArm, Constants.Arm.kDrivePosition));
 
     shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
     shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
-    // dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
-    // dropNodeTrigger.whileTrue(new DropNoteIntoAmpGroup(sArm, sShooter, sIntake));
+    dropNodeTrigger = new Trigger(() -> {return mCoopController.getRawAxis(Constants.IntakeConstants.ejectButton)>=0.01; });
+    dropNodeTrigger.whileTrue(new IntakeOut(sIntake));
 
     //DEBUG Commands
     intakeInTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeInButton);

@@ -77,6 +77,9 @@ public class Drivetrain extends SubsystemBase {
       mFrontLeftMotor.getEncoder().getPosition(), mFrontRightMotor.getEncoder().getPosition(),
       mRearLeftMotor.getEncoder().getPosition(), mRearRightMotor.getEncoder().getPosition()
     ), robotPose);
+
+    speedValue = OpConstants.kHighGear;
+    ToggleGear();
   }
 
   @Override

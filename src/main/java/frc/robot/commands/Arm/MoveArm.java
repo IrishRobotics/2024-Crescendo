@@ -19,7 +19,7 @@ private PIDController pidController;
     this.sArm = arm;
     this.position = position;
 
-    pidController = new PIDController(0.5, 0, 0);
+    pidController = new PIDController(0.2, 0, 0);
     pidController.setSetpoint(position);
     pidController.setTolerance(0.5);
 

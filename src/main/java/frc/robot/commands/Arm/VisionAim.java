@@ -8,6 +8,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -46,22 +47,20 @@ public class VisionAim extends Command {
 
     PhotonTrackedTarget target = sVision.TargetWithID(id);
     if(target==null){
+        this.cancel();
         return;
     }
 
-    double distance = sVision.GetDistanceToTargetFlat(target)*3.28084;
+    double distanceRaw = target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
+
+    double distance = (49.0/12)/Math.tan(Math.asin((49.0/12)/distanceRaw));
+    distance -= 0.5; //Offset
+    position = 10.3677*Math.pow((distance-3),0.308731)+12;
 
     SmartDashboard.putNumber("Shooting Distance", distance);
-
-    position = 10.3677*Math.pow((distance-3),0.308731)+15;
-
     SmartDashboard.putNumber("Shooting Angle", position);
 
     pidController.setSetpoint(position);
-    // Command moveArm = new MoveArm(sArm, angle);
-    // moveArm.andThen(()->{SmartDashboard.putString("Shooting status", "Arm done moving");}).schedule();
-    // SmartDashboard.putString("Shooting status", "Arm Position Set");
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -48,16 +48,16 @@ public class PositionShoot extends Command {
     PhotonTrackedTarget sideTag = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? sVision.TargetWithID(8) : sVision.TargetWithID(3); // 8 for blue 3 for red
 
     if(centerTag!=null){
-      double movement = centerTag.getBestCameraToTarget().getY()/2;
-      if(Math.abs(movement)<.15){
-        movement = .15*Math.signum(movement);
+      double movement = centerTag.getBestCameraToTarget().getY();
+      if(Math.abs(movement)<.2){
+        movement = .2*Math.signum(movement);
       }
       sDrivetrain.Drive(0, 0, movement, false);
       SmartDashboard.putString("Shooting Positioning","Focusing on Center Tag");
     }else if(sideTag!=null){
-      double movement = sideTag.getBestCameraToTarget().getY()/2;
-      if(Math.abs(movement)<.15){
-        movement = .15*Math.signum(movement);
+      double movement = sideTag.getBestCameraToTarget().getY();
+      if(Math.abs(movement)<.2){
+        movement = .2*Math.signum(movement);
       }
       sDrivetrain.Drive(0, 0, movement, false);
       SmartDashboard.putString("Shooting Positioning","Focusing on Side Tag");
@@ -83,6 +83,6 @@ public class PositionShoot extends Command {
     }
 
     SmartDashboard.putNumber("Center tag deviation", Math.abs(centerTag.getBestCameraToTarget().getY()));
-    return Math.abs(centerTag.getBestCameraToTarget().getY())<0.05;
+    return Math.abs(centerTag.getBestCameraToTarget().getY())<0.1;
   }
 }

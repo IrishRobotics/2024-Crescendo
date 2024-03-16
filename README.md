@@ -27,8 +27,8 @@ Drivetrain | SparkMax         | RightRear      | 4      |      |
 Intake     | TalonSRX         | Intake         | 5      |      |
 Shooter    | SparkMax         | ShooterTop     | 6      |      |
 Shooter    | SparkMax         | ShooterBottom  | 7      |      |
-Arm        | ?                | ArmMotor1      | 8      |      |
-Arm        | ?                | ArmMotor2      | 9      |      |
+Arm        | TalonSRX         | ArmMotor       | 8      |      |
+Lift       | TalonSRX         | LiftMotor      | 9      |      |
 
 ## Code Highlights
 

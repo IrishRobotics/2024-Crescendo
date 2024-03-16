@@ -42,7 +42,8 @@ public final class Constants {
     public static final int kNoteDetectorID = 0;
 
     //Input
-    public static final int intakeButton = XboxController.Button.kA.value;
+    public static final int intakeButton = XboxController.Button.kRightBumper.value;
+    public static final int ejectButton = XboxController.Axis.kRightTrigger.value;
   }
   
   public static class Shooter{
@@ -62,21 +63,23 @@ public final class Constants {
   public static class Arm{
     //Motors
     public static final int kArmMotor1 = 8;
-    public static final int kArmMotor2 = 9;
 
     //Encoders
-    public static final int kEncoderPin1 = 1;
-    public static final int kEncoderPin2 = 2;
+    public static final int kAbsEncoder = 1;
+    public static final double kEncoderOffset = 90/360;
 
     //Limit switches
     public static final int kMinLimit = 3;
     public static final int kMaxLimit = 4;
 
     //Positions
-    public static final double kDrivePosition = 50;
-    public static final double kPickupPosition = 10;
-    public static final double kShootPosition = 100;
+    public static final double kDrivePosition = 60;
+    public static final double kPickupPosition = 6;
     public static final double kAmpPosition = 60;
+  }
+
+  public static class Lift{
+    public static final int motorID = 9;
   }
 
   public static class DEBUG{

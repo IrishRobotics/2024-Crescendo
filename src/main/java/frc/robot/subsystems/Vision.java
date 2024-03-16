@@ -29,7 +29,7 @@ public class Vision extends SubsystemBase {
 
     for (PhotonTrackedTarget target : rawResult.targets) {
         SmartDashboard.putString("Target: "+target.getFiducialId(), target.getBestCameraToTarget().toString());
-        SmartDashboard.putNumber("Target Distance: "+ target.getFiducialId(), GetDistanceToTargetFlat(target));
+        // SmartDashboard.putNumber("Target Distance: "+ target.getFiducialId(), GetDistanceToTargetFlat(target));
     }
   }
 
@@ -43,13 +43,13 @@ public class Vision extends SubsystemBase {
     return null;
   }
 
-  public double GetDistanceToTargetFlat(PhotonTrackedTarget target){
-    Translation3d position = target.getBestCameraToTarget().getTranslation();
-    double hyp = Math.sqrt(Math.pow(position.getX(),2)+Math.pow(position.getZ(),2)+Math.pow(position.getY(),2));
-    hyp = position.getDistance(new Translation3d(0,0,0));
-    SmartDashboard.putNumber("X ROT", Math.toDegrees(target.getBestCameraToTarget().getRotation().getX()));
-    SmartDashboard.putNumber("Y ROT", Math.toDegrees(target.getBestCameraToTarget().getRotation().getY()));
-    SmartDashboard.putNumber("Z ROT", Math.toDegrees(target.getBestCameraToTarget().getRotation().getZ()));
-    return hyp*Math.cos(-target.getBestCameraToTarget().getRotation().getY());
-  }
+  // public double GetDistanceToTargetFlat(PhotonTrackedTarget target){
+  //   Translation3d position = target.getBestCameraToTarget().getTranslation();
+  //   double hyp = Math.sqrt(Math.pow(position.getX(),2)+Math.pow(position.getZ(),2)+Math.pow(position.getY(),2));
+  //   hyp = position.getDistance(new Translation3d(0,0,0));
+  //   SmartDashboard.putNumber("X ROT", Math.toDegrees(target.getBestCameraToTarget().getRotation().getX()));
+  //   SmartDashboard.putNumber("Y ROT", Math.toDegrees(target.getBestCameraToTarget().getRotation().getY()));
+  //   SmartDashboard.putNumber("Z ROT", Math.toDegrees(target.getBestCameraToTarget().getRotation().getZ()));
+  //   return hyp*Math.cos(-target.getBestCameraToTarget().getRotation().getY());
+  // }
 }
