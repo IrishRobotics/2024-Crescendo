@@ -29,6 +29,12 @@ public final class Constants {
     public static final double kLowGear = 0.4;
     public static final double kMaxSpeed = 0.8;
 
+    public static final double moveKP = 0.2;
+    public static final double moveKI = 0.001;
+    public static final double moveKD = 0.0;
+
+    public static final double minSpeed = .15;
+
     //Input
     public static final int GearButton = XboxController.Button.kStart.value;
   }

@@ -4,20 +4,30 @@
 
 package frc.robot.commands.Drivetrain;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.Constants.OpConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class Move extends Command {
-  private Translation2d startPosition;
   private Drivetrain sDrivetrain;
-  private Translation2d movement;
+  PIDController xController;
+  PIDController yController;
+  Pose2d target, current;
 
   /** Creates a new Move. */
-  public Move(double x, double y, Drivetrain drivetrain) {
+  public Move(Pose2d target, Drivetrain drivetrain) {
     sDrivetrain = drivetrain;
-    movement = new Translation2d(x, y);
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.target = target;
+
+    xController = new PIDController(Constants.OpConstants.moveKP, Constants.OpConstants.moveKI, Constants.OpConstants.moveKD);
+    yController = new PIDController(Constants.OpConstants.moveKP, Constants.OpConstants.moveKI, Constants.OpConstants.moveKD);
+
+    xController.setTolerance(0.02);
+    yController.setTolerance(0.02);
 
     addRequirements(drivetrain);
   }
@@ -25,14 +35,32 @@ public class Move extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    startPosition = sDrivetrain.robotPose.getTranslation();
-    sDrivetrain.Drive(movement.minus(sDrivetrain.robotPose.getTranslation().minus(startPosition)).getAngle().getCos(), movement.minus(sDrivetrain.robotPose.getTranslation().minus(startPosition)).getAngle().getSin(), 0, true);
+    xController.setSetpoint(target.getX());
+    yController.setSetpoint(target.getY());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    sDrivetrain.Drive(movement.minus(sDrivetrain.robotPose.getTranslation().minus(startPosition)).getAngle().getCos(), movement.minus(sDrivetrain.robotPose.getTranslation().minus(startPosition)).getAngle().getSin(), 0, true);
+    double xSpeed, ySpeed;
+    this.current = sDrivetrain.robotPose;
+
+    xSpeed = xController.calculate(current.getX());
+    ySpeed = yController.calculate(current.getY());
+
+    if(xController.atSetpoint()){
+      xSpeed = 0;
+    }else{
+      xSpeed = Math.max(Math.abs(xSpeed), OpConstants.minSpeed)*Math.signum(xSpeed);
+    }
+
+    if(yController.atSetpoint()){
+      ySpeed = 0;
+    }else{
+      ySpeed = Math.max(Math.abs(ySpeed), OpConstants.minSpeed)*Math.signum(ySpeed);
+    }
+
+    sDrivetrain.Drive(xSpeed, ySpeed, 0, false);
   }
 
   // Called once the command ends or is interrupted.
@@ -44,6 +72,6 @@ public class Move extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return sDrivetrain.robotPose.getTranslation().getDistance(movement)<.1;
+    return xController.atSetpoint() && yController.atSetpoint();
   }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.Lift;
 import frc.robot.commands.Arm.ArmDown;
 import frc.robot.commands.Arm.VisionAim;
 import frc.robot.commands.Arm.ArmUp;
@@ -22,6 +23,7 @@ import frc.robot.commands.Groups.ShootNoteGroup;
 import frc.robot.commands.Intake.IntakeIn;
 import frc.robot.commands.Intake.IntakeNote;
 import frc.robot.commands.Intake.IntakeOut;
+import frc.robot.commands.Lift.LiftUp;
 import frc.robot.commands.Shooter.RunShooterMotors;
 import frc.robot.commands.Shooter.ShootNote;
 import frc.robot.subsystems.Drivetrain;
@@ -33,6 +35,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -51,6 +54,7 @@ public class RobotContainer {
   private Shooter sShooter = new Shooter();
   private Arm sArm  = new Arm();
   private Vision sVision = new Vision();
+  private Lift sLift = new Lift();
 
   // Joysticks
   private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
@@ -59,17 +63,25 @@ public class RobotContainer {
 
   // Joystick Buttons
   
+  // Driver
   private Trigger toggleGearBtn;
-  private Trigger inputNoteTrigger;
+  private Trigger liftTrigger;
+
+  //Coop
+
+  //Groups
   private Trigger shootNoteTrigger;
   private Trigger dropNodeTrigger;
+  //Intake
+  private Trigger inputNoteTrigger;
+  //Arm
+  private Trigger armUpTrigger;
+  private Trigger armDownTrigger;
 
   // DEBUG Buttons
   private Trigger moveArmToShoot;
   private Trigger intakeInTrigger;
   private Trigger intakeOutTrigger;
-  private Trigger armUpTrigger;
-  private Trigger armDownTrigger;
   private Trigger runShooter;
 
   private Trigger armUpPreset;
@@ -89,7 +101,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
-    // sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
+    //sArm.setDefaultCommand(new MoveArm(sArm, Constants.Arm.kDrivePosition));
 
     // autoSelect.setDefaultOption("Move out", new MoveOut(sDrivetrain));
     autoSelect.setDefaultOption("Nothing", null);
@@ -110,9 +122,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
     toggleGearBtn = new JoystickButton(mOpController, Constants.OpConstants.GearButton);
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
+
+    liftTrigger = new JoystickButton(mOpController, XboxController.Button.kB.value);
+    liftTrigger.whileTrue(new LiftUp(sLift));
 
     inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
     inputNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
@@ -124,6 +138,12 @@ public class RobotContainer {
     dropNodeTrigger = new Trigger(() -> {return mCoopController.getRawAxis(Constants.IntakeConstants.ejectButton)>=0.01; });
     dropNodeTrigger.whileTrue(new IntakeOut(sIntake));
 
+    armUpTrigger = new Trigger(() -> {return mCoopController.getPOV()==0;});
+    armUpTrigger.whileTrue(new ArmUp(sArm));
+
+    armDownTrigger = new Trigger(() -> {return mCoopController.getPOV()==180;});
+    armDownTrigger.whileTrue(new ArmDown(sArm));
+
     //DEBUG Commands
     intakeInTrigger = new JoystickButton(mDEBUGController, Constants.DEBUG.intakeInButton);
     //intakeInTrigger.whileTrue(new IntakeIn(sIntake));
@@ -134,11 +154,6 @@ public class RobotContainer {
 
     // manualArmControlTrigger = new Trigger(()->{ return mDEBUGController.getRawAxis(Constants.DEBUG.armJoystick)!=0; });
     // manualArmControlTrigger.whileTrue(new MoveArmFromController(sArm, mDEBUGController));
-    armUpTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kRightBumper.value);
-    armUpTrigger.whileTrue(new ArmUp(sArm));
-
-    armDownTrigger = new JoystickButton(mDEBUGController, XboxController.Button.kLeftBumper.value);
-    armDownTrigger.whileTrue(new ArmDown(sArm));
 
     moveArmToShoot = new JoystickButton(mDEBUGController, XboxController.Button.kY.value);
     moveArmToShoot.onTrue(new VisionAim(sArm, sVision));
