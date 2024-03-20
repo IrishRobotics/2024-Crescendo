@@ -108,7 +108,7 @@ public class RobotContainer {
     autoSelect.addOption("Potato Move",new PotatoAuto(sDrivetrain) );
     autoSelect.addOption("Move Out", new MoveOut(sDrivetrain));
 
-
+    SmartDashboard.putData(autoSelect);
     // Configure the trigger bindings
     configureBindings();
   }

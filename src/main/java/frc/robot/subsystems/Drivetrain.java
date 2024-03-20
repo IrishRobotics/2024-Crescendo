@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,10 +36,10 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax mRearLeftMotor   = new CANSparkMax(Constants.OpConstants.kRearLeftID, MotorType.kBrushless);
   private CANSparkMax mRearRightMotor  = new CANSparkMax(Constants.OpConstants.kRearRightID, MotorType.kBrushless);
 
-  private RelativeEncoder mFrontLeftEncoder  = mFrontLeftMotor.getEncoder();
-  private RelativeEncoder mFrontRightEncoder = mFrontRightMotor.getEncoder();
-  private RelativeEncoder mRearLeftEncoder   = mRearLeftMotor.getEncoder();
-  private RelativeEncoder mRearRightEncoder  = mRearRightMotor.getEncoder();
+  // private RelativeEncoder mFrontLeftEncoder  = mFrontLeftMotor.getEncoder();
+  // private RelativeEncoder mFrontRightEncoder = mFrontRightMotor.getEncoder();
+  // private RelativeEncoder mRearLeftEncoder   = mRearLeftMotor.getEncoder();
+  // private RelativeEncoder mRearRightEncoder  = mRearRightMotor.getEncoder();
 
   private Translation2d frontLeftTranslate = new Translation2d(0.26, 0.26);
   private Translation2d frontRightTranslate = new Translation2d(0.26, -0.26);
@@ -51,12 +52,22 @@ public class Drivetrain extends SubsystemBase {
 
   private MecanumDriveOdometry odometry;
   public Pose2d robotPose;
+  private Field2d field = new Field2d();
+
+
+
+  double countsPerRev = 42;
+  double conversionFactor = 4 * 64 * Math.PI; //1:4 gearbox plus 8in wheels
 
   //Menanum Drive
   private MecanumDrive mMecanumDrive = new MecanumDrive(mFrontLeftMotor, mRearLeftMotor, mFrontRightMotor, mRearRightMotor);
   
   /** Creates a new Drivetrain. */
   public Drivetrain() {
+    mNavx.reset();
+
+
+
     mFrontLeftMotor.setInverted(true);
     mRearLeftMotor.setInverted(true);
 
@@ -64,38 +75,38 @@ public class Drivetrain extends SubsystemBase {
     mFrontRightMotor.setIdleMode(IdleMode.kBrake);
     mRearLeftMotor.setIdleMode(IdleMode.kBrake);
     mRearRightMotor.setIdleMode(IdleMode.kBrake);
+    // mFrontLeftEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
+    // mFrontRightEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
+    // mRearLeftEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
+    // mRearRightEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
 
-    double countsPerRev = 42;
-    double conversionFactor = 4 * 64 * Math.PI; //1:4 gearbox plus 8in wheels
-    mFrontLeftEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
-    mFrontRightEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
-    mRearLeftEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
-    mRearRightEncoder.setPositionConversionFactor(conversionFactor/countsPerRev);
-
-    robotPose = new Pose2d(0.0, 0.0, new Rotation2d()); // Inital pose of the robot
+    robotPose = new Pose2d(0.0, 0.0, mNavx.getRotation2d()); // Inital pose of the robot
     odometry = new MecanumDriveOdometry(kinematics, mNavx.getRotation2d(), new MecanumDriveWheelPositions(
-      mFrontLeftMotor.getEncoder().getPosition(), mFrontRightMotor.getEncoder().getPosition(),
-      mRearLeftMotor.getEncoder().getPosition(), mRearRightMotor.getEncoder().getPosition()
+      getWheelDistance(mFrontLeftMotor), getWheelDistance(mFrontRightMotor),
+      getWheelDistance(mRearLeftMotor), getWheelDistance(mRearRightMotor)
     ), robotPose);
 
     speedValue = OpConstants.kHighGear;
     ToggleGear();
+
+    SmartDashboard.putData(field);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Test motor movement", mRearRightMotor.getEncoder().getPosition());
-
-    var wheelPositions = new MecanumDriveWheelPositions(
-      mFrontLeftMotor.getEncoder().getPosition(), mFrontRightMotor.getEncoder().getPosition(),
-      mRearLeftMotor.getEncoder().getPosition(), mRearRightMotor.getEncoder().getPosition()
+    MecanumDriveWheelPositions wheelPositions = new MecanumDriveWheelPositions(
+      getWheelDistance(mFrontLeftMotor), getWheelDistance(mFrontRightMotor),
+      getWheelDistance(mRearLeftMotor), getWheelDistance(mRearRightMotor)
     );
   
     // Get the rotation of the robot from the gyro.
-    var gyroAngle = mNavx.getRotation2d();
+    Rotation2d gyroAngle = mNavx.getRotation2d();
   
     // Update the pose
     robotPose = odometry.update(gyroAngle, wheelPositions);
+    field.setRobotPose(odometry.getPoseMeters());
+
+    SmartDashboard.updateValues();
   }
 
   public void ToggleGear() {
@@ -119,5 +130,11 @@ public class Drivetrain extends SubsystemBase {
     }else{
       mMecanumDrive.driveCartesian(x*Math.abs(x)*speedValue, y*Math.abs(y)*speedValue, turn*Math.abs(turn)*speedValue);
     }
+  }
+
+
+  public double getWheelDistance(CANSparkMax motor){
+    double rawVal = motor.getEncoder().getPosition();
+    return -(rawVal/countsPerRev)/5.95 * 0.2032 * Math.PI;
   }
 }
