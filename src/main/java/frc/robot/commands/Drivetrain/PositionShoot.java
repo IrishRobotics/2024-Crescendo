@@ -52,17 +52,17 @@ public class PositionShoot extends Command {
       if(Math.abs(movement)<.2){
         movement = .2*Math.signum(movement);
       }
-      sDrivetrain.Drive(0, 0, movement, false);
+      sDrivetrain.drive(0, 0, movement, false);
       SmartDashboard.putString("Shooting Positioning","Focusing on Center Tag");
     }else if(sideTag!=null){
       double movement = sideTag.getBestCameraToTarget().getY();
       if(Math.abs(movement)<.2){
         movement = .2*Math.signum(movement);
       }
-      sDrivetrain.Drive(0, 0, movement, false);
+      sDrivetrain.drive(0, 0, movement, false);
       SmartDashboard.putString("Shooting Positioning","Focusing on Side Tag");
     }else{
-      sDrivetrain.Drive(0, 0, 0.1, false);   
+      sDrivetrain.drive(0, 0, 0.1, false);   
       SmartDashboard.putString("Shooting Positioning","Failed to find Tags");
     }
   }

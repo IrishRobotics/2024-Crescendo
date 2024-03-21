@@ -20,6 +20,13 @@ public final class Constants {
   public static final int kDEBUGControllerPost = 2;
 
   public static class OpConstants {
+
+    //Input
+    public static final int GearButton = XboxController.Button.kStart.value;
+  }
+
+  public static class DriveConstants{
+
     // Drivetrain Constants
     public static final int kFrontLeftID = 1;
     public static final int kFrontRightID = 2;
@@ -29,14 +36,12 @@ public final class Constants {
     public static final double kLowGear = 0.4;
     public static final double kMaxSpeed = 0.8;
 
+    //Auto PID Control
+    public static final double minSpeed = .3;
     public static final double moveKP = 1;
     public static final double moveKI = 0.001;
-    public static final double moveKD = 0.0001;
+    public static final double moveKD = 0;
 
-    public static final double minSpeed = .3;
-
-    //Input
-    public static final int GearButton = XboxController.Button.kStart.value;
   }
 
   public static class IntakeConstants{

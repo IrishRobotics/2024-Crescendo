@@ -4,19 +4,29 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Arm extends SubsystemBase{
+public class Arm extends SubsystemBase {
+  //Motors
   private WPI_TalonSRX mMotor1;
+  //Sensors
   private DutyCycleEncoder angleSensor;
-  //private double position;
+  //Shuffleboard
+  private ShuffleboardTab tab;
+  private GenericEntry sArmPosition;
+  private GenericEntry sArmSpeed;
 
   /** Creates a new Arm. */
   public Arm() {
@@ -25,22 +35,40 @@ public class Arm extends SubsystemBase{
 
     angleSensor = new DutyCycleEncoder(Constants.Arm.kAbsEncoder);
     angleSensor.setPositionOffset(Constants.Arm.kEncoderOffset);
+
+    this.addChild("Motor", mMotor1);
+    this.addChild("Encoder", angleSensor);
+
+    configureDashboard();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putString("Arm Position", String.valueOf(GetAngle()));
+    sArmPosition.setDouble(getAngle());
   }
 
-  public void Move(double speed){
+  public void move(double speed) {
     mMotor1.set(speed);
+    sArmSpeed.setDouble(speed);
   }
 
-  public void Stop(){
+  public void stop() {
     mMotor1.set(0);
   }
 
-  public double GetAngle(){
-    return (angleSensor.getAbsolutePosition()*360+2)%360;
+  public double getAngle() {
+    return (angleSensor.getAbsolutePosition() * 360 + 2) % 360;
+  }
+
+  private void configureDashboard() {
+    tab = Shuffleboard.getTab("Arm");
+
+    sArmPosition = tab.add("Position", this.getAngle())
+        .getEntry();
+
+    sArmSpeed = tab.add("Speed", 0)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", -1, "max", 1))
+        .getEntry();
   }
 }

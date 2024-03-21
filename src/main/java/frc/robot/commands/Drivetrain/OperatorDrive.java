@@ -30,7 +30,7 @@ public class OperatorDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    sDrive.Drive(mController.getRightY(), mController.getRightX(), mController.getLeftX(), mFieldRelative);
+    sDrive.drive(mController.getRightY(), mController.getRightX(), mController.getLeftX(), mFieldRelative);
   }
 
   // Called once the command ends or is interrupted.

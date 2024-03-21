@@ -37,18 +37,18 @@ private PIDController pidController;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double setSpeed = pidController.calculate(sArm.GetAngle(),position);
-    if((sArm.GetAngle()>90&&setSpeed>0)||(sArm.GetAngle()<5&&setSpeed<0)){
-      sArm.Move(0);
+    double setSpeed = pidController.calculate(sArm.getAngle(),position);
+    if((sArm.getAngle()>90&&setSpeed>0)||(sArm.getAngle()<5&&setSpeed<0)){
+      sArm.move(0);
     }else{
-        sArm.Move(setSpeed);
+        sArm.move(setSpeed);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    sArm.Move(0);
+    sArm.move(0);
   }
 
   // Returns true when the command should end.

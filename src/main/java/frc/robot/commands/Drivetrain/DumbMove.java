@@ -24,13 +24,13 @@ public class DumbMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    sDrivetrain.Drive(speed, 0, 0, false);
+    sDrivetrain.drive(speed, 0, 0, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    sDrivetrain.Drive(speed, 0, 0, false);
+    sDrivetrain.drive(speed, 0, 0, false);
   }
 
   // Called once the command ends or is interrupted.

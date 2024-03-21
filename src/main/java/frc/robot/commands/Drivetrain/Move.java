@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OpConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -24,8 +25,8 @@ public class Move extends Command {
     sDrivetrain = drivetrain;
     this.target = target;
 
-    xController = new PIDController(Constants.OpConstants.moveKP, Constants.OpConstants.moveKI, Constants.OpConstants.moveKD);
-    yController = new PIDController(Constants.OpConstants.moveKP, Constants.OpConstants.moveKI, Constants.OpConstants.moveKD);
+    xController = new PIDController(Constants.DriveConstants.moveKP, Constants.DriveConstants.moveKI, Constants.DriveConstants.moveKD);
+    yController = new PIDController(Constants.DriveConstants.moveKP, Constants.DriveConstants.moveKI, Constants.DriveConstants.moveKD);
 
     xController.setTolerance(0.02);
     yController.setTolerance(0.02);
@@ -44,7 +45,7 @@ public class Move extends Command {
   @Override
   public void execute() {
     double xSpeed, ySpeed;
-    this.current = sDrivetrain.robotPose;
+    this.current = sDrivetrain.getPose();
 
     
     SmartDashboard.putString("Auto Status", current.getX() + "," +current.getY());
@@ -55,24 +56,23 @@ public class Move extends Command {
     if(xController.atSetpoint()){
       xSpeed = 0;
     }else{
-      xSpeed = Math.max(Math.abs(xSpeed), OpConstants.minSpeed)*Math.signum(xSpeed);
+      xSpeed = Math.max(Math.abs(xSpeed), DriveConstants.minSpeed)*Math.signum(xSpeed);
     }
 
     if(yController.atSetpoint()){
       ySpeed = 0;
     }else{
-      ySpeed = Math.max(Math.abs(ySpeed), OpConstants.minSpeed)*Math.signum(ySpeed);
+      ySpeed = Math.max(Math.abs(ySpeed), DriveConstants.minSpeed)*Math.signum(ySpeed);
     }
 
-    sDrivetrain.Drive(-xSpeed, ySpeed, 0, false);
+    sDrivetrain.drive(-xSpeed, ySpeed, 0, false);
 
-    SmartDashboard.putNumber("Y Speed", ySpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    sDrivetrain.Drive(0, 0, 0, false);
+    sDrivetrain.stop();
   }
 
   // Returns true when the command should end.
