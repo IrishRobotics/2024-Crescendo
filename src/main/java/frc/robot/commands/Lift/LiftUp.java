@@ -10,7 +10,7 @@ import frc.robot.subsystems.Lift;
 public class LiftUp extends Command {
   Lift sLift;
 
-  /** Creates a new LiftUp. */
+  /** Creates a new LiftDown. */
   public LiftUp(Lift lift) {
     addRequirements(lift);
     sLift = lift;
@@ -20,7 +20,7 @@ public class LiftUp extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    sLift.Up();
+    sLift.Down();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

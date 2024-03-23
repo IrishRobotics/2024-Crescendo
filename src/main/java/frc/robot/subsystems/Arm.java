@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -54,6 +53,7 @@ public class Arm extends SubsystemBase {
 
   public void stop() {
     mMotor1.set(0);
+    sArmSpeed.setDouble(0);
   }
 
   public double getAngle() {
@@ -64,6 +64,9 @@ public class Arm extends SubsystemBase {
     tab = Shuffleboard.getTab("Arm");
 
     sArmPosition = tab.add("Position", this.getAngle())
+        .withSize(2,2)
+        .withWidget(BuiltInWidgets.kGyro)
+        .withProperties(Map.of("startingAngle", 270))
         .getEntry();
 
     sArmSpeed = tab.add("Speed", 0)

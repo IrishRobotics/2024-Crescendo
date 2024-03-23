@@ -4,13 +4,14 @@
 
 package frc.robot.commands.Groups;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.Arm.VisionAim;
 import frc.robot.commands.Drivetrain.PositionShoot;
 import frc.robot.commands.Shooter.ShootNote;
+import frc.robot.commands.Arm.VisionAim;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -22,10 +23,10 @@ import frc.robot.subsystems.Vision;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootNoteGroup extends SequentialCommandGroup {
   /** Creates a new Shoot. */
-  public ShootNoteGroup(Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
+  public ShootNoteGroup(Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision, GenericEntry statusEntry) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     
-    addCommands(new PositionShoot(drivetrain, vision), new VisionAim(arm, vision),new WaitCommand(1),new ShootNote(shooter, intake));
+    addCommands(new PositionShoot(drivetrain, vision, statusEntry), new VisionAim(arm, vision, statusEntry), new InstantCommand(()->{statusEntry.setString("Shooting");}),new WaitCommand(1),new ShootNote(shooter, intake));
   }
 }

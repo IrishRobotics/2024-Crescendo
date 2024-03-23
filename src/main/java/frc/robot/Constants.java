@@ -38,7 +38,7 @@ public final class Constants {
 
     //Auto PID Control
     public static final double minSpeed = .3;
-    public static final double moveKP = 1;
+    public static final double moveKP = 0.5;
     public static final double moveKI = 0.001;
     public static final double moveKD = 0;
 
@@ -60,15 +60,15 @@ public final class Constants {
   public static class Shooter{
     //Motors
     public static final int kShooter1ID = 6;
-    public static final double kShooter1RPM = 1000;
-    public static final double kDrop1RMP = 100;
     public static final int kShooter2ID = 7;
-    public static final double kShooter2RPM = 1000;
-    public static final double kDrop2RMP = 100;
+
+    public static final double kDropRMP = 1000;
+    public static final double kShootRPM = 5300;
 
     //Input
+    public static final int overrideShootButton = XboxController.Axis.kLeftTrigger.value;
     public static final int kShootButton = XboxController.Button.kLeftBumper.value;
-    public static final int kDropButton = XboxController.Button.kRightBumper.value;
+    public static final int kAmpButton = XboxController.Button.kA.value;
   }
   
   public static class Arm{
@@ -86,19 +86,13 @@ public final class Constants {
     //Positions
     public static final double kDrivePosition = 60;
     public static final double kPickupPosition = 6;
-    public static final double kAmpPosition = 60;
+    public static final double kAmpPosition = 87;
   }
 
   public static class Lift{
     public static final int motorID = 9;
-  }
 
-  public static class DEBUG{
-    public static final int intakeInButton = XboxController.Button.kA.value;
-    public static final int intakeOutButton = XboxController.Button.kB.value;
-
-    public static final int armJoystick = XboxController.Axis.kRightY.value;
-
-    public static final int runShooterMotors = XboxController.Button.kX.value;
+    public static final int downButton = XboxController.Button.kB.value;
+    public static final int upButton = XboxController.Button.kY.value;
   }
 }

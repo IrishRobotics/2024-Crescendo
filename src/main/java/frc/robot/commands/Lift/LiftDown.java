@@ -10,16 +10,17 @@ import frc.robot.subsystems.Lift;
 public class LiftDown extends Command {
   Lift sLift;
 
-  /** Creates a new LiftDown. */
+  /** Creates a new LiftUp. */
   public LiftDown(Lift lift) {
     addRequirements(lift);
+    sLift = lift;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    sLift.Down();
+    sLift.Up();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OpConstants;
 import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
@@ -62,6 +61,8 @@ public class Drivetrain extends SubsystemBase {
   private GenericEntry sFrontRightMotorDistances;
   private GenericEntry sRearLeftMotorDistances;
   private GenericEntry sRearRightMotorDistances;
+  private GenericEntry sPoseX;
+  private GenericEntry sPoseY;
   private GenericEntry sForwardSpeed;
   private GenericEntry sStrafeSpeed;
   private GenericEntry sTurnSpeed;
@@ -100,6 +101,12 @@ public class Drivetrain extends SubsystemBase {
     mRearLeftMotor.setIdleMode(IdleMode.kBrake);
     mRearRightMotor.setIdleMode(IdleMode.kBrake);
 
+    mFrontLeftMotor.getEncoder().setPositionConversionFactor(1);
+    mFrontRightMotor.getEncoder().setPositionConversionFactor(1);
+    mRearLeftMotor.getEncoder().setPositionConversionFactor(1);
+    mRearRightMotor.getEncoder().setPositionConversionFactor(1);
+
+    field = new Field2d();
     robotPose = new Pose2d(0.0, 0.0, mNavx.getRotation2d()); // Inital pose of the robot
     odometry = new MecanumDriveOdometry(kinematics, mNavx.getRotation2d(), new MecanumDriveWheelPositions(
         getWheelDistance(mFrontLeftMotor), getWheelDistance(mFrontRightMotor),
@@ -119,7 +126,7 @@ public class Drivetrain extends SubsystemBase {
         getWheelDistance(mRearLeftMotor), getWheelDistance(mRearRightMotor));
 
     // Get the rotation of the robot from the gyro.
-    Rotation2d gyroAngle = mNavx.getRotation2d();
+    Rotation2d gyroAngle = new Rotation2d(mNavx.getYaw());
 
     // Update the pose
     robotPose = odometry.update(gyroAngle, wheelPositions);
@@ -130,6 +137,9 @@ public class Drivetrain extends SubsystemBase {
     sFrontRightMotorDistances.setDouble(getWheelDistance(mFrontRightMotor));
     sRearLeftMotorDistances.setDouble(getWheelDistance(mRearLeftMotor));
     sRearRightMotorDistances.setDouble(getWheelDistance(mRearRightMotor));
+    sPoseX.setDouble(robotPose.getX());
+    sPoseY.setDouble(robotPose.getY());
+    SmartDashboard.putNumber("Gyro", mNavx.getRotation2d().getDegrees());
 
     SmartDashboard.updateValues();
   }
@@ -166,7 +176,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getWheelDistance(CANSparkMax motor) {
     double rawVal = motor.getEncoder().getPosition();
-    return -(rawVal) / 5.95 * 0.2032 * Math.PI;
+    return -(rawVal) / 8.45 * 0.2032 * Math.PI;
   }
 
   public Pose2d getPose() {
@@ -182,7 +192,7 @@ public class Drivetrain extends SubsystemBase {
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Drivetrain");
     tab.add("Drivetrain", mMecanumDrive);
-    tab.add("NavX", mNavx);
+    tab.add("NavX", mNavx.getRotation2d().getDegrees());
     sFrontLeftMotorDistances = tab.add("Front Left(m)", getWheelDistance(mFrontLeftMotor)).getEntry();
     sFrontRightMotorDistances = tab.add("Front Right(m)", getWheelDistance(mFrontRightMotor)).getEntry();
     sRearLeftMotorDistances = tab.add("Rear Left(m)", getWheelDistance(mRearLeftMotor)).getEntry();
@@ -190,6 +200,8 @@ public class Drivetrain extends SubsystemBase {
     sForwardSpeed = tab.add("Y Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
     sStrafeSpeed = tab.add("X Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
     sTurnSpeed = tab.add("Z Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
+    sPoseX = tab.add("Pose X (m)",robotPose.getX()).getEntry();
+    sPoseY = tab.add("Pose Y (m)",robotPose.getY()).getEntry();
 
     SmartDashboard.putData(field);
   }

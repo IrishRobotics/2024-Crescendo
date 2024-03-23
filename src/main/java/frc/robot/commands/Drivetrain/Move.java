@@ -65,7 +65,7 @@ public class Move extends Command {
       ySpeed = Math.max(Math.abs(ySpeed), DriveConstants.minSpeed)*Math.signum(ySpeed);
     }
 
-    sDrivetrain.drive(-xSpeed, ySpeed, 0, false);
+    sDrivetrain.drive(xSpeed,ySpeed, 0, true);
 
   }
 

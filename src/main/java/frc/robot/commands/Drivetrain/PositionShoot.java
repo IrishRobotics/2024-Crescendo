@@ -4,19 +4,17 @@
 
 package frc.robot.commands.Drivetrain;
 
-import javax.tools.Diagnostic;
+import java.util.Map;
 
-import org.opencv.core.Algorithm;
-import org.opencv.core.Mat;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.apriltag.AprilTagDetection;
-import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.ADXL345_I2C.AllAxes;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
@@ -26,19 +24,27 @@ public class PositionShoot extends Command {
   private Drivetrain sDrivetrain;
   private Vision sVision;
 
+  GenericEntry positioningStatus;
+  GenericEntry centerTagDeviation;
+  GenericEntry shootingStatus;
+
   /** Creates a new PositionShoot. */
-  public PositionShoot(Drivetrain drivetrain, Vision vision) {
+  public PositionShoot(Drivetrain drivetrain, Vision vision, GenericEntry shootingStatus) {
+    this.shootingStatus = shootingStatus;
     sDrivetrain = drivetrain;
     this.sVision = vision;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
+
+    configureDashboard();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putString("Shooting status", "Aligning robot");
+    Shuffleboard.selectTab("Auto Shoot");
+    shootingStatus.setString("Aligning robot");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,24 +59,25 @@ public class PositionShoot extends Command {
         movement = .2*Math.signum(movement);
       }
       sDrivetrain.drive(0, 0, movement, false);
-      SmartDashboard.putString("Shooting Positioning","Focusing on Center Tag");
+      positioningStatus.setString("Focusing on Center Tag");
     }else if(sideTag!=null){
       double movement = sideTag.getBestCameraToTarget().getY();
       if(Math.abs(movement)<.2){
         movement = .2*Math.signum(movement);
       }
       sDrivetrain.drive(0, 0, movement, false);
-      SmartDashboard.putString("Shooting Positioning","Focusing on Side Tag");
+      positioningStatus.setString("Focusing on Side Tag");
     }else{
       sDrivetrain.drive(0, 0, 0.1, false);   
-      SmartDashboard.putString("Shooting Positioning","Failed to find Tags");
+      positioningStatus.setString("Failed to find Tags");
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("Shooting status", "Aligning arm");
+    positioningStatus.setString("Done");
+    centerTagDeviation.setDouble(0);
   }
 
   // Returns true when the command should end.
@@ -82,7 +89,22 @@ public class PositionShoot extends Command {
         return false;
     }
 
-    SmartDashboard.putNumber("Center tag deviation", Math.abs(centerTag.getBestCameraToTarget().getY()));
+    centerTagDeviation.setDouble(centerTag.getBestCameraToTarget().getY());
     return Math.abs(centerTag.getBestCameraToTarget().getY())<0.1;
+  }
+
+  private void configureDashboard(){
+    ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
+
+    positioningStatus = tab.add("Shooting Positoning Status", "Disabled")
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(2, 1)
+        .getEntry();
+    
+    centerTagDeviation = tab.add("Center Tag Deviation", 0)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withSize(2, 1)
+        .withProperties(Map.of("min", -1, "max", 1))
+        .getEntry();
   }
 }
