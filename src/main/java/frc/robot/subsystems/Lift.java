@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -31,21 +32,26 @@ public class Lift extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    sMotorSpeed.setDouble(motor.get());
   }
 
-  public void Down(){
+  public void down(){
     motor.set(-1);
-    sMotorSpeed.setDouble(motor.get());
   }
 
-  public void Up(){
+  public void up(){
     motor.set(1);
-    sMotorSpeed.setDouble(motor.get());
   }
 
-  public void Stop(){
+  public void stop(){
     motor.set(0);
-    sMotorSpeed.setDouble(motor.get());
+  }
+
+  public Command cmdDown(){
+    return this.startEnd(this::down,this::stop);
+  }
+  public Command cmdUp(){
+    return this.startEnd(this::up, this::stop);
   }
 
   private void configureDashboard() {

@@ -91,11 +91,7 @@ public class VisionAim extends Command {
     //double setspeed if we are less than motor can output.
     if(Math.abs(setSpeed) < 0.3) setSpeed *= 2;
 
-    if((sArm.getAngle()>90&&setSpeed>0)||(sArm.getAngle()<5&&setSpeed<0)){
-        sArm.move(0);
-    }else{
-        sArm.move(setSpeed);
-    }
+    sArm.move(setSpeed);
   }
 
   // Called once the command ends or is interrupted.

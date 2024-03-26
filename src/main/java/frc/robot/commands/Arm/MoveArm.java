@@ -38,17 +38,13 @@ private PIDController pidController;
   @Override
   public void execute() {
     double setSpeed = pidController.calculate(sArm.getAngle(),position);
-    if((sArm.getAngle()>90&&setSpeed>0)||(sArm.getAngle()<5&&setSpeed<0)){
-      sArm.move(0);
-    }else{
-        sArm.move(setSpeed);
-    }
+    sArm.move(setSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    sArm.move(0);
+    sArm.stop();
   }
 
   // Returns true when the command should end.

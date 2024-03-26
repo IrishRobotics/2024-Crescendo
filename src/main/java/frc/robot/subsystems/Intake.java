@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -41,26 +43,28 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    sNoteDetected.setBoolean(NoteDetected());
+    sNoteDetected.setBoolean(noteDetected());
   }
+
+
   public void set(double speed){
     intakeMotor.set(speed);
     sMotorSpeed.setDouble(speed);
   }
-
-  public void NoteIn(){
+  public void in(){
     this.set(Constants.IntakeConstants.kIntakeSpeed);
   }
 
-  public void Stop(){
-    this.set(0);
-  }
-
-  public void NoteOut(){
+  public void out(){
     this.set(-Constants.IntakeConstants.kIntakeSpeed);
   }
 
-  public Boolean NoteDetected(){
+  public void stop(){
+    this.set(0);
+  }
+
+
+  public Boolean noteDetected(){
     return !noteDetector.get();
   }
 
@@ -68,6 +72,19 @@ public class Intake extends SubsystemBase {
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Intake");
     sMotorSpeed = tab.add("Speed",0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-    sNoteDetected = tab.add("Note Detected", this.NoteDetected()).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    sNoteDetected = tab.add("Note Detected", this.noteDetected()).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+  }
+
+  // Commands
+  public Command cmdIn(){
+    return this.startEnd(this::in, this::stop);
+  }
+
+  public Command cmdOut(){
+    return this.startEnd(this::out, this::stop);
+  }
+
+  public Command cmdAutoIn(){
+    return new FunctionalCommand(this::in, this::in, interrupted -> this.stop(), this::noteDetected, this);
   }
 }

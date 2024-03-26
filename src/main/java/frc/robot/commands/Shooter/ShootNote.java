@@ -26,14 +26,14 @@ public class ShootNote extends Command {
   @Override
   public void initialize() {
     SmartDashboard.putString("Shooting status", "Starting shooter");
-    sShooter.EnableShooter(false);
+    sShooter.enableShooter(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if(sShooter.getSpeed()>5200){
-      sIntake.NoteIn();
+      sIntake.in();
       SmartDashboard.putString("Shooting status", "Shooting note");
     }
   }
@@ -41,8 +41,8 @@ public class ShootNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    sShooter.StopShooter();
-    sIntake.Stop();
+    sShooter.stop();
+    sIntake.stop();
   }
 
   // Returns true when the command should end.

@@ -21,8 +21,14 @@ public final class Constants {
 
   public static class OpConstants {
 
-    //Input
-    public static final int GearButton = XboxController.Button.kStart.value;
+    //Drive
+    public static final int kGearButton = XboxController.Button.kStart.value;
+    //Intake
+    public static final int kIntakeButton = XboxController.Button.kRightBumper.value;
+    public static final int kEjectButton = XboxController.Axis.kRightTrigger.value;
+    //Lift
+    public static final int kLiftDownButton = XboxController.Button.kB.value;
+    public static final int kLiftUpButton = XboxController.Button.kY.value;
   }
 
   public static class DriveConstants{
@@ -35,6 +41,9 @@ public final class Constants {
     public static final double kHighGear = 0.8;
     public static final double kLowGear = 0.4;
     public static final double kMaxSpeed = 0.8;
+
+    public static final double kWheelCircumfrance = 0.2032 * Math.PI;
+    public static final double kGearRatio = 8.45 ;
 
     //Auto PID Control
     public static final double minSpeed = .3;
@@ -52,12 +61,9 @@ public final class Constants {
     //Sensors
     public static final int kNoteDetectorID = 0;
 
-    //Input
-    public static final int intakeButton = XboxController.Button.kRightBumper.value;
-    public static final int ejectButton = XboxController.Axis.kRightTrigger.value;
   }
   
-  public static class Shooter{
+  public static class ShooterConstants{
     //Motors
     public static final int kShooter1ID = 6;
     public static final int kShooter2ID = 7;
@@ -71,7 +77,7 @@ public final class Constants {
     public static final int kAmpButton = XboxController.Button.kA.value;
   }
   
-  public static class Arm{
+  public static class ArmConstants{
     //Motors
     public static final int kArmMotor1 = 8;
 
@@ -82,6 +88,8 @@ public final class Constants {
     //Limit switches
     public static final int kMinLimit = 3;
     public static final int kMaxLimit = 4;
+    public static final int kMinAngle = 5;
+    public static final int kMaxAngle = 90;
 
     //Positions
     public static final double kDrivePosition = 60;
@@ -92,7 +100,5 @@ public final class Constants {
   public static class Lift{
     public static final int motorID = 9;
 
-    public static final int downButton = XboxController.Button.kB.value;
-    public static final int upButton = XboxController.Button.kY.value;
   }
 }

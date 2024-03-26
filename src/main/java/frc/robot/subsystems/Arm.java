@@ -14,26 +14,27 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
-  //Motors
+  // Motors
   private WPI_TalonSRX mMotor1;
-  //Sensors
+  // Sensors
   private DutyCycleEncoder angleSensor;
-  //Shuffleboard
+  // Shuffleboard
   private ShuffleboardTab tab;
   private GenericEntry sArmPosition;
   private GenericEntry sArmSpeed;
 
   /** Creates a new Arm. */
   public Arm() {
-    mMotor1 = new WPI_TalonSRX(Constants.Arm.kArmMotor1);
+    mMotor1 = new WPI_TalonSRX(ArmConstants.kArmMotor1);
     mMotor1.setNeutralMode(NeutralMode.Brake);
 
-    angleSensor = new DutyCycleEncoder(Constants.Arm.kAbsEncoder);
-    angleSensor.setPositionOffset(Constants.Arm.kEncoderOffset);
+    angleSensor = new DutyCycleEncoder(ArmConstants.kAbsEncoder);
+    angleSensor.setPositionOffset(ArmConstants.kEncoderOffset);
 
     this.addChild("Motor", mMotor1);
     this.addChild("Encoder", angleSensor);
@@ -47,6 +48,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void move(double speed) {
+    //Check if angle is past soft limits
+    if ((getAngle() > ArmConstants.kMaxAngle && speed > 0) ||
+        (getAngle() < ArmConstants.kMinAngle && speed < 0)) {
+      speed = 0;
+    }
+
     mMotor1.set(speed);
     sArmSpeed.setDouble(speed);
   }
@@ -64,7 +71,7 @@ public class Arm extends SubsystemBase {
     tab = Shuffleboard.getTab("Arm");
 
     sArmPosition = tab.add("Position", this.getAngle())
-        .withSize(2,2)
+        .withSize(2, 2)
         .withWidget(BuiltInWidgets.kGyro)
         .withProperties(Map.of("startingAngle", 270))
         .getEntry();
@@ -73,5 +80,14 @@ public class Arm extends SubsystemBase {
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", -1, "max", 1))
         .getEntry();
+  }
+
+  // Commands
+  public Command cmdUp() {
+    return this.runEnd(() -> this.move(0.5), this::stop);
+  }
+
+  public Command cmdDown() {
+    return this.runEnd(() -> this.move(-0.5), this::stop);
   }
 }

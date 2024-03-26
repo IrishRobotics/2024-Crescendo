@@ -22,7 +22,7 @@ public class RunShooterMotors extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    sShooter.RunMotors(speed);
+    sShooter.setSpeed(speed);
     System.out.print("Shooting");
   }
 
@@ -33,7 +33,7 @@ public class RunShooterMotors extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    sShooter.RunMotors(0);
+    sShooter.setSpeed(0);
   }
 
   // Returns true when the command should end.
