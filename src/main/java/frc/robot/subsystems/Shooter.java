@@ -4,26 +4,21 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
-
-import java.util.Map;
-
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
+import java.util.Map;
 
 public class Shooter extends SubsystemBase {
-  private CANSparkMax mShooterMotor1 ;
-  private CANSparkMax mShooterMotor2 ;
+  private CANSparkMax mShooterMotor1;
+  private CANSparkMax mShooterMotor2;
   private SparkPIDController m_pidController1;
   private SparkPIDController m_pidController2;
 
@@ -43,15 +38,15 @@ public class Shooter extends SubsystemBase {
     m_pidController1 = mShooterMotor1.getPIDController();
     m_pidController2 = mShooterMotor2.getPIDController();
 
-    m_pidController1.setP(0.0002);
-    m_pidController1.setI(0.000001);
-    m_pidController1.setD(0.0001);
-    m_pidController1.setOutputRange(-6000, 6000);
+    m_pidController1.setP(ShooterConstants.kP);
+    m_pidController1.setI(ShooterConstants.kI);
+    m_pidController1.setD(ShooterConstants.kD);
+    m_pidController1.setOutputRange(ShooterConstants.kMinRpm, ShooterConstants.kMaxRpm);
 
-    m_pidController2.setP(0.0002);
-    m_pidController2.setI(0.000001);
-    m_pidController2.setD(0.000001);
-    m_pidController1.setOutputRange(-6000, 6000);
+    m_pidController2.setP(ShooterConstants.kP);
+    m_pidController2.setI(ShooterConstants.kI);
+    m_pidController2.setD(ShooterConstants.kD);
+    m_pidController2.setOutputRange(ShooterConstants.kMinRpm, ShooterConstants.kMaxRpm);
 
     configureDashboard();
   }
@@ -63,38 +58,42 @@ public class Shooter extends SubsystemBase {
     sMotor2Speed.setDouble(mShooterMotor2.getEncoder().getVelocity());
   }
 
-  public void setSpeed(double speed){
+  public void setSpeed(double speed) {
     mShooterMotor1.set(speed);
     mShooterMotor2.set(speed);
   }
 
-  public void enableShooter(boolean drop){
-    if(drop){
+  public void enableShooter(boolean drop) {
+    if (drop) {
       m_pidController1.setReference(ShooterConstants.kDropRMP, ControlType.kVelocity);
       m_pidController2.setReference(ShooterConstants.kDropRMP, ControlType.kVelocity);
-    }else{
-      m_pidController1.setReference(ShooterConstants.kShootRPM,ControlType.kVelocity);
-      m_pidController2.setReference(ShooterConstants.kShootRPM,ControlType.kVelocity);
+    } else {
+      m_pidController1.setReference(ShooterConstants.kShootRPM, ControlType.kVelocity);
+      m_pidController2.setReference(ShooterConstants.kShootRPM, ControlType.kVelocity);
     }
   }
 
-  public void stop(){
+  public void stop() {
     mShooterMotor1.stopMotor();
     mShooterMotor2.stopMotor();
   }
 
   public double getSpeed() {
-    return (mShooterMotor1.getEncoder().getVelocity()+mShooterMotor2.getEncoder().getVelocity())/2;
+    return (mShooterMotor1.getEncoder().getVelocity() + mShooterMotor2.getEncoder().getVelocity())
+        / 2;
   }
-
 
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Shooter");
-    sMotor1Speed = tab.add("Motor 1",0)
-          .withWidget(BuiltInWidgets.kDial)
-          .withProperties(Map.of("min", 0, "max", 6000)).getEntry();
-    sMotor2Speed = tab.add("Motor 2",0)
-          .withWidget(BuiltInWidgets.kDial)
-          .withProperties(Map.of("min", 0, "max", 6000)).getEntry();
+    sMotor1Speed =
+        tab.add("Motor 1", 0)
+            .withWidget(BuiltInWidgets.kDial)
+            .withProperties(Map.of("min", 0, "max", ShooterConstants.kMaxRpm))
+            .getEntry();
+    sMotor2Speed =
+        tab.add("Motor 2", 0)
+            .withWidget(BuiltInWidgets.kDial)
+            .withProperties(Map.of("min", 0, "max", ShooterConstants.kMaxRpm))
+            .getEntry();
   }
 }

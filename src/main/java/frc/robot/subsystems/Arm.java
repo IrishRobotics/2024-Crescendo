@@ -4,11 +4,8 @@
 
 package frc.robot.subsystems;
 
-import java.util.Map;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -17,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import java.util.Map;
 
 public class Arm extends SubsystemBase {
   // Motors
@@ -48,9 +46,9 @@ public class Arm extends SubsystemBase {
   }
 
   public void move(double speed) {
-    //Check if angle is past soft limits
-    if ((getAngle() > ArmConstants.kMaxAngle && speed > 0) ||
-        (getAngle() < ArmConstants.kMinAngle && speed < 0)) {
+    // Check if angle is past soft limits
+    if ((getAngle() > ArmConstants.kMaxAngle && speed > 0)
+        || (getAngle() < ArmConstants.kMinAngle && speed < 0)) {
       speed = 0;
     }
 
@@ -70,16 +68,18 @@ public class Arm extends SubsystemBase {
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Arm");
 
-    sArmPosition = tab.add("Position", this.getAngle())
-        .withSize(2, 2)
-        .withWidget(BuiltInWidgets.kGyro)
-        .withProperties(Map.of("startingAngle", 270))
-        .getEntry();
+    sArmPosition =
+        tab.add("Position", this.getAngle())
+            .withSize(2, 2)
+            .withWidget(BuiltInWidgets.kGyro)
+            .withProperties(Map.of("startingAngle", 270))
+            .getEntry();
 
-    sArmSpeed = tab.add("Speed", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", -1, "max", 1))
-        .getEntry();
+    sArmSpeed =
+        tab.add("Speed", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", -1, "max", 1))
+            .getEntry();
   }
 
   // Commands

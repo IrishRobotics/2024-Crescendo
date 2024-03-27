@@ -4,19 +4,18 @@
 
 package frc.robot.commands.Drivetrain;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 public class DumbMove extends Command {
   private double speed;
   private Drivetrain sDrivetrain;
+
   /** Creates a new DumbMove. */
   public DumbMove(double speed, Drivetrain sDrivetrain) {
     this.speed = speed;
     this.sDrivetrain = sDrivetrain;
 
-    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(sDrivetrain);
   }

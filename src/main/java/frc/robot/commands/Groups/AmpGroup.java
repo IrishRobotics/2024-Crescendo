@@ -6,8 +6,8 @@ package frc.robot.commands.Groups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.commands.Shooter.DropNote;
 import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Shooter.DropNote;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;

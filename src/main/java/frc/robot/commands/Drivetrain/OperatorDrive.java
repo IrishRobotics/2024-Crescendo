@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 public class OperatorDrive extends Command {
-  private XboxController mController;  
+  private XboxController mController;
   private Drivetrain sDrive;
   private Boolean mFieldRelative;
 
   /** Creates a new OperatorDrive. */
-  public OperatorDrive(Drivetrain drive, XboxController xboxController,boolean fieldRelative ) {
+  public OperatorDrive(Drivetrain drive, XboxController xboxController, boolean fieldRelative) {
     this.mController = xboxController;
     this.sDrive = drive;
     this.mFieldRelative = fieldRelative;
@@ -30,7 +30,8 @@ public class OperatorDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    sDrive.drive(mController.getRightY(), mController.getRightX(), mController.getLeftX(), mFieldRelative);
+    sDrive.drive(
+        mController.getRightY(), mController.getRightX(), mController.getLeftX(), mFieldRelative);
   }
 
   // Called once the command ends or is interrupted.

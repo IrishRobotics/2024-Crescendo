@@ -4,10 +4,6 @@
 
 package frc.robot.commands.Arm;
 
-import java.util.Map;
-
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -15,12 +11,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Vision;
+import java.util.Map;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionAim extends Command {
   private Arm sArm;
@@ -59,20 +55,24 @@ public class VisionAim extends Command {
 
   boolean valuesCalculated = false;
 
-  void calculateValues(){
-    int id = DriverStation.getAlliance().orElse(Alliance.Blue)==Alliance.Blue ? 7 : 4; // 7 for blue, 4 for red
+  void calculateValues() {
+    int id =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? 7
+            : 4; // 7 for blue, 4 for red
 
     PhotonTrackedTarget target = sVision.TargetWithID(id);
-    if(target==null){
-        return;
+    if (target == null) {
+      return;
     }
     valuesCalculated = true;
 
-    double distanceRaw = target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
+    double distanceRaw =
+        target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
 
-    double distance = (49.0/12)/Math.tan(Math.asin((49.0/12)/distanceRaw));
-    distance -= 0.5; //Offset
-    position = 10.3677*Math.pow((distance-3),0.308731)+12;
+    double distance = (49.0 / 12) / Math.tan(Math.asin((49.0 / 12) / distanceRaw));
+    distance -= 0.5; // Offset
+    position = 10.3677 * Math.pow((distance - 3), 0.308731) + 12;
 
     shootingDistance.setDouble(distance);
     shootingAngle.setDouble(position);
@@ -83,13 +83,13 @@ public class VisionAim extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(!valuesCalculated){
+    if (!valuesCalculated) {
       calculateValues();
     }
-    double setSpeed = pidController.calculate(sArm.getAngle(),position);
+    double setSpeed = pidController.calculate(sArm.getAngle(), position);
 
-    //double setspeed if we are less than motor can output.
-    if(Math.abs(setSpeed) < 0.3) setSpeed *= 2;
+    // double setspeed if we are less than motor can output.
+    if (Math.abs(setSpeed) < 0.3) setSpeed *= 2;
 
     sArm.move(setSpeed);
   }
@@ -111,18 +111,20 @@ public class VisionAim extends Command {
     return pidController.atSetpoint();
   }
 
-  private void configureDashboard(){
+  private void configureDashboard() {
     ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
-    
-    shootingAngle = tab.add("Shooting Angle", 0)
-        .withWidget(BuiltInWidgets.kGyro)
-        .withSize(2,2)
-        .withProperties(Map.of("startingAngle", 270))
-        .getEntry();
-      
-    shootingDistance = tab.add("Shooting Distance", 0)
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withSize(2, 1)
-        .getEntry();
+
+    shootingAngle =
+        tab.add("Shooting Angle", 0)
+            .withWidget(BuiltInWidgets.kGyro)
+            .withSize(2, 2)
+            .withProperties(Map.of("startingAngle", 270))
+            .getEntry();
+
+    shootingDistance =
+        tab.add("Shooting Distance", 0)
+            .withWidget(BuiltInWidgets.kNumberBar)
+            .withSize(2, 1)
+            .getEntry();
   }
 }

@@ -32,7 +32,7 @@ public class ShootNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(sShooter.getSpeed()>5200){
+    if (sShooter.getSpeed() > 5200) {
       sIntake.in();
       SmartDashboard.putString("Shooting status", "Shooting note");
     }

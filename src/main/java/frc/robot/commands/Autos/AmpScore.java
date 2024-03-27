@@ -18,7 +18,7 @@ public class AmpScore extends InstantCommand {
   private Command redCommandSequence;
 
   /**
-   * @param position the starting position of the robot 0 closest to amp - 2 furthest away from amp 
+   * @param position the starting position of the robot 0 closest to amp - 2 furthest away from amp
    */
   public AmpScore(int position, Drivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.

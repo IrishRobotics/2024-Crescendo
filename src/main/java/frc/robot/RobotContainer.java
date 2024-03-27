@@ -4,24 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Constants.*;
-
-import frc.robot.commands.Arm.MoveArm;
-import frc.robot.commands.Autos.MoveOut;
-import frc.robot.commands.Drivetrain.OperatorDrive;
-import frc.robot.commands.Drivetrain.PotatoAuto;
-import frc.robot.commands.Groups.AmpGroup;
-import frc.robot.commands.Groups.PickupNoteGroup;
-import frc.robot.commands.Groups.ShootNoteGroup;
-import frc.robot.commands.Shooter.ShootNote;
-
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Lift;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -32,24 +14,36 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.*;
+import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Autos.MoveOut;
+import frc.robot.commands.Drivetrain.OperatorDrive;
+import frc.robot.commands.Drivetrain.PotatoAuto;
+import frc.robot.commands.Groups.AmpGroup;
+import frc.robot.commands.Groups.PickupNoteGroup;
+import frc.robot.commands.Groups.ShootNoteGroup;
+import frc.robot.commands.Shooter.ShootNote;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
   // Subsystems
-  private Drivetrain sDrivetrain ;
-  private Intake sIntake ;
+  private Drivetrain sDrivetrain;
+  private Intake sIntake;
   private Shooter sShooter;
   private Arm sArm;
-  private Vision sVision ;
+  private Vision sVision;
   private Lift sLift;
 
   // Joysticks
@@ -80,9 +74,7 @@ public class RobotContainer {
   // Autonomous
   // TODO - Add auto commands
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Init Joysticks
     mOpController = new XboxController(Constants.kDriverControllerPort);
@@ -98,7 +90,7 @@ public class RobotContainer {
 
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
-    
+
     // Setup auto selector
     autoSelect.setDefaultOption("Nothing", null);
     autoSelect.addOption("Potato Move", new PotatoAuto(sDrivetrain));
@@ -110,17 +102,12 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
+   * Use this method to define your trigger->command mappings. Triggers can be created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
    * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
   private void configureBindings() {
@@ -141,38 +128,48 @@ public class RobotContainer {
     intakeNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
     intakeNoteTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
-    GenericEntry shootNodeStatusEntry = Shuffleboard.getTab("Auto Shoot").add("Status", "Not Running").withSize(3, 2)
-        .getEntry();
-    shootNoteTrigger = new JoystickButton(mCoopController, ShooterConstants.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, shootNodeStatusEntry));
-    shootNoteTrigger.onFalse(new InstantCommand(() -> {
-      shootNodeStatusEntry.setString("Not Running");
-    }));
+    GenericEntry shootNodeStatusEntry =
+        Shuffleboard.getTab("Auto Shoot").add("Status", "Not Running").withSize(3, 2).getEntry();
+    shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
+    shootNoteTrigger.whileTrue(
+        new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, shootNodeStatusEntry));
+    shootNoteTrigger.onFalse(
+        new InstantCommand(
+            () -> {
+              shootNodeStatusEntry.setString("Not Running");
+            }));
 
-    ejectNodeTrigger = new Trigger(() -> {
-      return mCoopController.getRawAxis(OpConstants.kEjectButton) >= 0.01;
-    });
+    ejectNodeTrigger =
+        new Trigger(
+            () -> {
+              return mCoopController.getRawAxis(OpConstants.kEjectButton) >= 0.01;
+            });
     ejectNodeTrigger.whileTrue(sIntake.cmdOut());
 
-    ampTrigger = new JoystickButton(mCoopController, ShooterConstants.kAmpButton);
+    ampTrigger = new JoystickButton(mCoopController, OpConstants.kAmpButton);
     ampTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
 
     // Override
-    overrideShootNodeTrigger = new Trigger(() -> {
-      return mCoopController.getRawAxis(ShooterConstants.overrideShootButton) >= 0.01;
-    });
+    overrideShootNodeTrigger =
+        new Trigger(
+            () -> {
+              return mCoopController.getRawAxis(OpConstants.overrideShootButton) >= 0.01;
+            });
     overrideShootNodeTrigger.whileTrue(new ShootNote(sShooter, sIntake));
 
-    armUpTrigger = new Trigger(() -> {
-      return mCoopController.getPOV() == 0;
-    });
+    armUpTrigger =
+        new Trigger(
+            () -> {
+              return mCoopController.getPOV() == 0;
+            });
     armUpTrigger.whileTrue(sArm.cmdUp());
 
-    armDownTrigger = new Trigger(() -> {
-      return mCoopController.getPOV() == 180;
-    });
+    armDownTrigger =
+        new Trigger(
+            () -> {
+              return mCoopController.getPOV() == 180;
+            });
     armDownTrigger.whileTrue(sArm.cmdDown());
-
 
     SmartDashboard.putData(autoSelect);
   }
@@ -181,7 +178,7 @@ public class RobotContainer {
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   * 
+   *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {

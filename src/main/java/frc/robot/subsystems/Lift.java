@@ -5,8 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.fasterxml.jackson.databind.introspect.ConcreteBeanPropertyBase;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -16,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Lift extends SubsystemBase {
-  WPI_TalonSRX motor;
-  //Shuffleboard
+  private WPI_TalonSRX motor;
+  // Shuffleboard
   private ShuffleboardTab tab;
   private GenericEntry sMotorSpeed;
 
@@ -26,7 +24,7 @@ public class Lift extends SubsystemBase {
     motor = new WPI_TalonSRX(Constants.Lift.motorID);
 
     addChild("Motor", motor);
-     configureDashboard();
+    configureDashboard();
   }
 
   @Override
@@ -35,27 +33,28 @@ public class Lift extends SubsystemBase {
     sMotorSpeed.setDouble(motor.get());
   }
 
-  public void down(){
+  public void down() {
     motor.set(-1);
   }
 
-  public void up(){
+  public void up() {
     motor.set(1);
   }
 
-  public void stop(){
+  public void stop() {
     motor.set(0);
   }
 
-  public Command cmdDown(){
-    return this.startEnd(this::down,this::stop);
+  public Command cmdDown() {
+    return this.startEnd(this::down, this::stop);
   }
-  public Command cmdUp(){
+
+  public Command cmdUp() {
     return this.startEnd(this::up, this::stop);
   }
 
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Lift");
-    sMotorSpeed = tab.add("Speed",0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
+    sMotorSpeed = tab.add("Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
   }
 }

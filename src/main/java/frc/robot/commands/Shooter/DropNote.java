@@ -30,7 +30,9 @@ public class DropNote extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() { /* No update code */ }
+  public void execute() {
+    /* No update code */
+  }
 
   // Called once the command ends or is interrupted.
   @Override

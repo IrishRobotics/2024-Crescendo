@@ -34,22 +34,22 @@ Lift       | TalonSRX         | LiftMotor      | 9      |      |
 
 - Building with Gradle
 
-	Instead of working with Ant, we used GradleRIO, which is a powerful Gradle plugin that allows us to build and deploy our code for FRC. It automatically fetches WPILib, CTRE Toolsuite, and other libraries, and is easier to use across different IDEs. 
+  Instead of working with Ant, we used GradleRIO, which is a powerful Gradle plugin that allows us to build and deploy our code for FRC. It automatically fetches WPILib, CTRE Toolsuite, and other libraries, and is easier to use across different IDEs.
 
 
 ## Package Functions
 - frc.robot
 
-	Contains the robot's central functions and holds a file with all numerical constants used throughout the code. For example, the `Robot` class controls all routines depending on the robot state.
+  Contains the robot's central functions and holds a file with all numerical constants used throughout the code. For example, the `Robot` class controls all routines depending on the robot state.
 
 - frc.robot.subsystems
-	
-	Subsystems are consolidated into one central class per subsystem, all of which extend the Subsystem abstract class. Each subsystem uses state machines for control.
-	Each subsystem is also a singleton, meaning that there is only one instance of each. To modify a subsystem, one would get the instance of the subsystem and change its state. The `Subsystem` class will work on setting the desired state.
+
+  Subsystems are consolidated into one central class per subsystem, all of which extend the Subsystem abstract class. Each subsystem uses state machines for control.
+  Each subsystem is also a singleton, meaning that there is only one instance of each. To modify a subsystem, one would get the instance of the subsystem and change its state. The `Subsystem` class will work on setting the desired state.
 
 - frc.robot.commands
 
-	Commands define the operation of the robot incorporating the capabilities defined in the subsystems. Commands are subclasses of `Command` or `CommandGroup`. Commands run when scheduled or in response to buttons being pressed or virtual buttons from the `SmartDashboard`.
+  Commands define the operation of the robot incorporating the capabilities defined in the subsystems. Commands are subclasses of `Command` or `CommandGroup`. Commands run when scheduled or in response to buttons being pressed or virtual buttons from the `SmartDashboard`.
 
 
 

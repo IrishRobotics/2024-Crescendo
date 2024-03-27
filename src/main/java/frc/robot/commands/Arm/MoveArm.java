@@ -6,13 +6,12 @@ package frc.robot.commands.Arm;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 
 public class MoveArm extends Command {
-private Arm sArm;
-private double position;
-private PIDController pidController;
+  private Arm sArm;
+  private double position;
+  private PIDController pidController;
 
   /** Creates a new DefaultArm. */
   public MoveArm(Arm arm, double position) {
@@ -31,13 +30,13 @@ private PIDController pidController;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //Do nothing
+    // Do nothing
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double setSpeed = pidController.calculate(sArm.getAngle(),position);
+    double setSpeed = pidController.calculate(sArm.getAngle(), position);
     sArm.move(setSpeed);
   }
 

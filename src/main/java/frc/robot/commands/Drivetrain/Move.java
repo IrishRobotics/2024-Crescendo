@@ -6,12 +6,10 @@ package frc.robot.commands.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OpConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class Move extends Command {
@@ -25,8 +23,16 @@ public class Move extends Command {
     sDrivetrain = drivetrain;
     this.target = target;
 
-    xController = new PIDController(Constants.DriveConstants.moveKP, Constants.DriveConstants.moveKI, Constants.DriveConstants.moveKD);
-    yController = new PIDController(Constants.DriveConstants.moveKP, Constants.DriveConstants.moveKI, Constants.DriveConstants.moveKD);
+    xController =
+        new PIDController(
+            Constants.DriveConstants.moveKP,
+            Constants.DriveConstants.moveKI,
+            Constants.DriveConstants.moveKD);
+    yController =
+        new PIDController(
+            Constants.DriveConstants.moveKP,
+            Constants.DriveConstants.moveKI,
+            Constants.DriveConstants.moveKD);
 
     xController.setTolerance(0.02);
     yController.setTolerance(0.02);
@@ -47,26 +53,24 @@ public class Move extends Command {
     double xSpeed, ySpeed;
     this.current = sDrivetrain.getPose();
 
-    
-    SmartDashboard.putString("Auto Status", current.getX() + "," +current.getY());
+    SmartDashboard.putString("Auto Status", current.getX() + "," + current.getY());
 
     xSpeed = xController.calculate(current.getX());
     ySpeed = yController.calculate(current.getY());
 
-    if(xController.atSetpoint()){
+    if (xController.atSetpoint()) {
       xSpeed = 0;
-    }else{
-      xSpeed = Math.max(Math.abs(xSpeed), DriveConstants.minSpeed)*Math.signum(xSpeed);
+    } else {
+      xSpeed = Math.max(Math.abs(xSpeed), DriveConstants.minSpeed) * Math.signum(xSpeed);
     }
 
-    if(yController.atSetpoint()){
+    if (yController.atSetpoint()) {
       ySpeed = 0;
-    }else{
-      ySpeed = Math.max(Math.abs(ySpeed), DriveConstants.minSpeed)*Math.signum(ySpeed);
+    } else {
+      ySpeed = Math.max(Math.abs(ySpeed), DriveConstants.minSpeed) * Math.signum(ySpeed);
     }
 
-    sDrivetrain.drive(xSpeed,ySpeed, 0, true);
-
+    sDrivetrain.drive(xSpeed, ySpeed, 0, true);
   }
 
   // Called once the command ends or is interrupted.

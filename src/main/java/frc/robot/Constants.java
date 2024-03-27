@@ -21,17 +21,21 @@ public final class Constants {
 
   public static class OpConstants {
 
-    //Drive
+    // Drive
     public static final int kGearButton = XboxController.Button.kStart.value;
-    //Intake
+    // Intake
     public static final int kIntakeButton = XboxController.Button.kRightBumper.value;
     public static final int kEjectButton = XboxController.Axis.kRightTrigger.value;
-    //Lift
+    // Lift
     public static final int kLiftDownButton = XboxController.Button.kB.value;
     public static final int kLiftUpButton = XboxController.Button.kY.value;
+    // Input
+    public static final int overrideShootButton = XboxController.Axis.kLeftTrigger.value;
+    public static final int kShootButton = XboxController.Button.kLeftBumper.value;
+    public static final int kAmpButton = XboxController.Button.kA.value;
   }
 
-  public static class DriveConstants{
+  public static class DriveConstants {
 
     // Drivetrain Constants
     public static final int kFrontLeftID = 1;
@@ -43,62 +47,61 @@ public final class Constants {
     public static final double kMaxSpeed = 0.8;
 
     public static final double kWheelCircumfrance = 0.2032 * Math.PI;
-    public static final double kGearRatio = 8.45 ;
+    public static final double kGearRatio = 8.45;
 
-    //Auto PID Control
+    // Auto PID Control
     public static final double minSpeed = .3;
     public static final double moveKP = 0.5;
     public static final double moveKI = 0.001;
     public static final double moveKD = 0;
-
   }
 
-  public static class IntakeConstants{
-    //Motors
+  public static class IntakeConstants {
+    // Motors
     public static final int kIntakeID = 5;
     public static final double kIntakeSpeed = 0.6;
 
-    //Sensors
+    // Sensors
     public static final int kNoteDetectorID = 0;
-
   }
-  
-  public static class ShooterConstants{
-    //Motors
+
+  public static class ShooterConstants {
+    // Motors
     public static final int kShooter1ID = 6;
     public static final int kShooter2ID = 7;
 
     public static final double kDropRMP = 1000;
     public static final double kShootRPM = 5300;
 
-    //Input
-    public static final int overrideShootButton = XboxController.Axis.kLeftTrigger.value;
-    public static final int kShootButton = XboxController.Button.kLeftBumper.value;
-    public static final int kAmpButton = XboxController.Button.kA.value;
+    public static final double kP = 0.0002;
+    public static final double kI = 0.000001;
+    public static final double kD = 0.0001;
+
+    public static final int kMinRpm = -6000;
+    public static final int kMaxRpm = 6000;
   }
-  
-  public static class ArmConstants{
-    //Motors
+
+  public static class ArmConstants {
+    // Motors
     public static final int kArmMotor1 = 8;
 
-    //Encoders
+    // Encoders
     public static final int kAbsEncoder = 1;
-    public static final double kEncoderOffset = 90/360;
+    public static final double kEncoderOffset = 90 / 360;
 
-    //Limit switches
+    // Limit switches
     public static final int kMinLimit = 3;
     public static final int kMaxLimit = 4;
     public static final int kMinAngle = 5;
     public static final int kMaxAngle = 90;
 
-    //Positions
+    // Positions
     public static final double kDrivePosition = 60;
     public static final double kPickupPosition = 6;
     public static final double kAmpPosition = 87;
   }
 
-  public static class Lift{
+  public static class Lift {
     public static final int motorID = 9;
-
   }
 }
