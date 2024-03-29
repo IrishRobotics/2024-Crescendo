@@ -93,10 +93,10 @@ public class Drivetrain extends SubsystemBase {
             frontLeftTranslate, frontRightTranslate, rearLeftTranslate, rearRightTranslate);
 
     // Set motor parameters
-    mFrontLeftMotor.setInverted(true);
-    mFrontRightMotor.setInverted(false);
-    mRearLeftMotor.setInverted(true);
-    mRearRightMotor.setInverted(false);
+    mFrontLeftMotor.setInverted(false);
+    mFrontRightMotor.setInverted(true);
+    mRearLeftMotor.setInverted(false);
+    mRearRightMotor.setInverted(true);
 
     mFrontLeftMotor.setIdleMode(IdleMode.kBrake);
     mFrontRightMotor.setIdleMode(IdleMode.kBrake);
@@ -215,7 +215,7 @@ public class Drivetrain extends SubsystemBase {
 
   private double getWheelDistance(CANSparkMax motor) {
     double rawVal = motor.getEncoder().getPosition();
-    return -(rawVal) / DriveConstants.kGearRatio * DriveConstants.kWheelCircumfrance;
+    return (rawVal) / DriveConstants.kGearRatio * DriveConstants.kWheelCircumfrance;
   }
 
   private double getWheelSpeed(CANSparkMax motor) {

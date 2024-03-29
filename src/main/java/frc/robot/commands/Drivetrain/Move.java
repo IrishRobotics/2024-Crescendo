@@ -70,7 +70,7 @@ public class Move extends Command {
       ySpeed = Math.max(Math.abs(ySpeed), DriveConstants.minSpeed) * Math.signum(ySpeed);
     }
 
-    sDrivetrain.drive(xSpeed, ySpeed, 0, true);
+    sDrivetrain.drive(xSpeed/0.4, -ySpeed/0.4, 0, true);
   }
 
   // Called once the command ends or is interrupted.

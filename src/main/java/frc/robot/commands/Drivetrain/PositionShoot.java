@@ -19,33 +19,35 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class PositionShoot extends Command {
   private Drivetrain sDrivetrain;
   private Vision sVision;
+  private double minSpeed = 0.15;
 
-  GenericEntry positioningStatus;
-  GenericEntry centerTagDeviation;
-  GenericEntry shootingStatus;
+  // GenericEntry positioningStatus;
+  // GenericEntry centerTagDeviation;
+  // GenericEntry shootingStatus;
 
   /** Creates a new PositionShoot. */
   public PositionShoot(Drivetrain drivetrain, Vision vision, GenericEntry shootingStatus) {
-    this.shootingStatus = shootingStatus;
+    // this.shootingStatus = shootingStatus;
     sDrivetrain = drivetrain;
     this.sVision = vision;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
 
-    configureDashboard();
+    // configureDashboard();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     Shuffleboard.selectTab("Auto Shoot");
-    shootingStatus.setString("Aligning robot");
+  //  if(shootingStatus != null) shootingStatus.setString("Aligning robot");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double movement = 0;
     PhotonTrackedTarget centerTag =
         (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue)
             ? sVision.TargetWithID(7)
@@ -56,30 +58,29 @@ public class PositionShoot extends Command {
             : sVision.TargetWithID(3); // 8 for blue 3 for red
 
     if (centerTag != null) {
-      double movement = centerTag.getBestCameraToTarget().getY();
-      if (Math.abs(movement) < .2) {
-        movement = .2 * Math.signum(movement);
+       movement = centerTag.getBestCameraToTarget().getY();
+      if (Math.abs(movement) < minSpeed) {
+        movement = minSpeed * Math.signum(movement);
       }
       sDrivetrain.drive(0, 0, movement, false);
-      positioningStatus.setString("Focusing on Center Tag");
+      // positioningStatus.setString("Focusing on Center Tag");
     } else if (sideTag != null) {
-      double movement = sideTag.getBestCameraToTarget().getY();
-      if (Math.abs(movement) < .2) {
-        movement = .2 * Math.signum(movement);
+       movement = sideTag.getBestCameraToTarget().getY();
+      if (Math.abs(movement) < minSpeed) {
+        movement = minSpeed * Math.signum(movement);
       }
-      sDrivetrain.drive(0, 0, movement, false);
-      positioningStatus.setString("Focusing on Side Tag");
+      // positioningStatus.setString("Focusing on Side Tag");
     } else {
-      sDrivetrain.drive(0, 0, 0.1, false);
-      positioningStatus.setString("Failed to find Tags");
+      // positioningStatus.setString("Failed to find Tags");
     }
+    sDrivetrain.drive(0, 0, -movement, false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    positioningStatus.setString("Done");
-    centerTagDeviation.setDouble(0);
+    // positioningStatus.setString("Done");
+    // centerTagDeviation.setDouble(0);
   }
 
   // Returns true when the command should end.
@@ -94,24 +95,24 @@ public class PositionShoot extends Command {
       return false;
     }
 
-    centerTagDeviation.setDouble(centerTag.getBestCameraToTarget().getY());
+    // centerTagDeviation.setDouble(centerTag.getBestCameraToTarget().getY());
     return Math.abs(centerTag.getBestCameraToTarget().getY()) < 0.1;
   }
 
-  private void configureDashboard() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
+  // private void configureDashboard() {
+  //   ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
 
-    positioningStatus =
-        tab.add("Shooting Positoning Status", "Disabled")
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(2, 1)
-            .getEntry();
+  //   positioningStatus =
+  //       tab.add("Shooting Positoning Status", "Disabled")
+  //           .withWidget(BuiltInWidgets.kTextView)
+  //           .withSize(2, 1)
+  //           .getEntry();
 
-    centerTagDeviation =
-        tab.add("Center Tag Deviation", 0)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withSize(2, 1)
-            .withProperties(Map.of("min", -1, "max", 1))
-            .getEntry();
-  }
+  //   centerTagDeviation =
+  //       tab.add("Center Tag Deviation", 0)
+  //           .withWidget(BuiltInWidgets.kNumberSlider)
+  //           .withSize(2, 1)
+  //           .withProperties(Map.of("min", -1, "max", 1))
+  //           .getEntry();
+  // }
 }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
 import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Autos.MidSpeaker;
 import frc.robot.commands.Autos.MoveOut;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Drivetrain.PotatoAuto;
@@ -68,6 +69,7 @@ public class RobotContainer {
   private Trigger armUpTrigger;
   private Trigger armDownTrigger;
 
+  GenericEntry shootNodeStatusEntry;
   // Auto Chooser
   SendableChooser<Command> autoSelect = new SendableChooser<>();
 
@@ -95,10 +97,12 @@ public class RobotContainer {
     autoSelect.setDefaultOption("Nothing", null);
     autoSelect.addOption("Potato Move", new PotatoAuto(sDrivetrain));
     autoSelect.addOption("Move Out", new MoveOut(sDrivetrain));
+    autoSelect.addOption("Speaker Mid", new MidSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision, null));
     SmartDashboard.putData(autoSelect);
 
     // Configure the trigger bindings
     configureBindings();
+    
   }
 
   /**
@@ -128,7 +132,7 @@ public class RobotContainer {
     intakeNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
     intakeNoteTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
-    GenericEntry shootNodeStatusEntry =
+    shootNodeStatusEntry =
         Shuffleboard.getTab("Auto Shoot").add("Status", "Not Running").withSize(3, 2).getEntry();
     shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
     shootNoteTrigger.whileTrue(
@@ -148,6 +152,7 @@ public class RobotContainer {
 
     ampTrigger = new JoystickButton(mCoopController, OpConstants.kAmpButton);
     ampTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
+    ampTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
     // Override
     overrideShootNodeTrigger =

@@ -62,7 +62,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAngle() {
-    return (angleSensor.getAbsolutePosition() * 360 + 2) % 360;
+    return (angleSensor.getAbsolutePosition() * 360 + 7) % 360;
   }
 
   private void configureDashboard() {

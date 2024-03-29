@@ -24,14 +24,14 @@ public class VisionAim extends Command {
   private PIDController pidController;
   private double position;
 
-  private GenericEntry shootingDistance;
-  private GenericEntry shootingAngle;
-  private GenericEntry statusEntry;
+  // private GenericEntry shootingDistance;
+  // private GenericEntry shootingAngle;
+  // private GenericEntry statusEntry;
 
   /** Creates a new ArmShoot. */
   public VisionAim(Arm arm, Vision vision, GenericEntry statusEntry) {
     sArm = arm;
-    this.statusEntry = statusEntry;
+    // this.statusEntry = statusEntry;
     sVision = vision;
 
     pidController = new PIDController(0.2, 0, 0);
@@ -40,7 +40,7 @@ public class VisionAim extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
 
-    configureDashboard();
+    // configureDashboard();
   }
 
   // Called when the command is initially scheduled.
@@ -48,7 +48,7 @@ public class VisionAim extends Command {
   public void initialize() {
     valuesCalculated = false;
     Shuffleboard.selectTab("Auto Shoot");
-    statusEntry.setString("Moving Arm");
+    // if(statusEntry != null )    statusEntry.setString("Moving Arm");
 
     calculateValues();
   }
@@ -74,8 +74,8 @@ public class VisionAim extends Command {
     distance -= 0.5; // Offset
     position = 10.3677 * Math.pow((distance - 3), 0.308731) + 12;
 
-    shootingDistance.setDouble(distance);
-    shootingAngle.setDouble(position);
+    // shootingDistance.setDouble(distance);
+    // shootingAngle.setDouble(position);
 
     pidController.setSetpoint(position);
   }
@@ -99,10 +99,10 @@ public class VisionAim extends Command {
   public void end(boolean interrupted) {
     sArm.stop();
 
-    shootingAngle.setDouble(0);
-    shootingDistance.setDouble(0);
+    // shootingAngle.setDouble(0);
+    // shootingDistance.setDouble(0);
 
-    statusEntry.setString("Shooting");
+    // if(statusEntry != null )  statusEntry.setString("Shooting");
   }
 
   // Returns true when the command should end.
@@ -111,20 +111,20 @@ public class VisionAim extends Command {
     return pidController.atSetpoint();
   }
 
-  private void configureDashboard() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
+  // private void configureDashboard() {
+  //   ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
 
-    shootingAngle =
-        tab.add("Shooting Angle", 0)
-            .withWidget(BuiltInWidgets.kGyro)
-            .withSize(2, 2)
-            .withProperties(Map.of("startingAngle", 270))
-            .getEntry();
+  //   shootingAngle =
+  //       tab.add("Shooting Angle", 0)
+  //           .withWidget(BuiltInWidgets.kGyro)
+  //           .withSize(2, 2)
+  //           .withProperties(Map.of("startingAngle", 270))
+  //           .getEntry();
 
-    shootingDistance =
-        tab.add("Shooting Distance", 0)
-            .withWidget(BuiltInWidgets.kNumberBar)
-            .withSize(2, 1)
-            .getEntry();
-  }
+  //   shootingDistance =
+  //       tab.add("Shooting Distance", 0)
+  //           .withWidget(BuiltInWidgets.kNumberBar)
+  //           .withSize(2, 1)
+  //           .getEntry();
+  // }
 }

@@ -90,13 +90,13 @@ public final class Constants {
     public static final double kEncoderOffset = 90 / 360;
 
     // Limit switches
-    public static final int kMinLimit = 3;
-    public static final int kMaxLimit = 4;
-    public static final int kMinAngle = 5;
+    // public static final int kMinLimit = 3;
+    // public static final int kMaxLimit = 4;
+    public static final int kMinAngle = 4;
     public static final int kMaxAngle = 90;
 
     // Positions
-    public static final double kDrivePosition = 60;
+    public static final double kDrivePosition = 45;
     public static final double kPickupPosition = 6;
     public static final double kAmpPosition = 87;
   }
