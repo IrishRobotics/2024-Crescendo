@@ -23,10 +23,10 @@ public class MoveOut extends InstantCommand {
 
   public MoveOut(Drivetrain drivetrain) {
     blueCommandSequence =
-        Commands.sequence(new Move(new Pose2d(2, 1, new Rotation2d()), drivetrain));
+        Commands.sequence(new Move(new Pose2d(2, 0, new Rotation2d()), drivetrain));
 
     redCommandSequence =
-        Commands.sequence(new Move(new Pose2d(2, 1, new Rotation2d()), drivetrain));
+        Commands.sequence(new Move(new Pose2d(2, 0, new Rotation2d()), drivetrain));
   }
 
   // Called when the command is initially scheduled.

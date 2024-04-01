@@ -4,16 +4,12 @@
 
 package frc.robot.commands.Drivetrain;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
-import java.util.Map;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PositionShoot extends Command {
@@ -21,27 +17,20 @@ public class PositionShoot extends Command {
   private Vision sVision;
   private double minSpeed = 0.15;
 
-  // GenericEntry positioningStatus;
-  // GenericEntry centerTagDeviation;
-  // GenericEntry shootingStatus;
-
   /** Creates a new PositionShoot. */
-  public PositionShoot(Drivetrain drivetrain, Vision vision, GenericEntry shootingStatus) {
-    // this.shootingStatus = shootingStatus;
-    sDrivetrain = drivetrain;
+  public PositionShoot(Drivetrain drivetrain, Vision vision) {
+    this.sDrivetrain = drivetrain;
     this.sVision = vision;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
-
-    // configureDashboard();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     Shuffleboard.selectTab("Auto Shoot");
-  //  if(shootingStatus != null) shootingStatus.setString("Aligning robot");
+    //  if(shootingStatus != null) shootingStatus.setString("Aligning robot");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,14 +47,14 @@ public class PositionShoot extends Command {
             : sVision.TargetWithID(3); // 8 for blue 3 for red
 
     if (centerTag != null) {
-       movement = centerTag.getBestCameraToTarget().getY();
+      movement = centerTag.getBestCameraToTarget().getY();
       if (Math.abs(movement) < minSpeed) {
         movement = minSpeed * Math.signum(movement);
       }
       sDrivetrain.drive(0, 0, movement, false);
       // positioningStatus.setString("Focusing on Center Tag");
     } else if (sideTag != null) {
-       movement = sideTag.getBestCameraToTarget().getY();
+      movement = sideTag.getBestCameraToTarget().getY();
       if (Math.abs(movement) < minSpeed) {
         movement = minSpeed * Math.signum(movement);
       }

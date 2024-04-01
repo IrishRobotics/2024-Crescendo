@@ -23,6 +23,7 @@ public class Arm extends SubsystemBase {
   private DutyCycleEncoder angleSensor;
   // Shuffleboard
   private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
   private GenericEntry sArmPosition;
   private GenericEntry sArmSpeed;
 
@@ -65,8 +66,15 @@ public class Arm extends SubsystemBase {
     return (angleSensor.getAbsolutePosition() * 360 + 7) % 360;
   }
 
+  public double getTargetAngle(double feet) {
+    double val = 10.3677 * Math.pow((feet - 3), 0.308731) + 12;
+    driveTab.add("Target Angle", val);
+    return val;
+  }
+
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Arm");
+    driveTab = Shuffleboard.getTab("Driver");
 
     sArmPosition =
         tab.add("Position", this.getAngle())

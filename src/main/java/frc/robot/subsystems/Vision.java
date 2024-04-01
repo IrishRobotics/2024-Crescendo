@@ -4,29 +4,54 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase {
-  PhotonCamera camera = new PhotonCamera("shootingSideCamera");
+  private PhotonPipelineResult rawResult;
+  private PhotonCamera camera;
+
+  // Shuffleboard
+  private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
+  private ShuffleboardLayout sTargetIds;
 
   /** Creates a new Vision. */
-  public Vision() {}
-
-  public PhotonPipelineResult rawResult;
+  public Vision() {
+    camera = new PhotonCamera("shootingSideCamera");
+    configureDashboard();
+  }
 
   @Override
   public void periodic() {
     rawResult = camera.getLatestResult();
-
+    sTargetIds.getComponents().clear();
     for (PhotonTrackedTarget target : rawResult.targets) {
-      SmartDashboard.putString(
-          "Target: " + target.getFiducialId(), target.getBestCameraToTarget().toString());
-      // SmartDashboard.putNumber("Target Distance: "+ target.getFiducialId(),
-      // GetDistanceToTargetFlat(target));
+      sTargetIds.add(
+          "Target: " + target.getFiducialId(), getPoseString(target.getBestCameraToTarget()));
+
+      // Get target distance
+      if ((DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+              && target.getFiducialId() == 7)
+          || (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+              && target.getFiducialId() == 4)) {
+        double distance = getTargetDistance(target);
+        driveTab.addDouble(
+            "Target Distance",
+            () -> {
+              return distance;
+            });
+      }
     }
   }
 
@@ -40,17 +65,21 @@ public class Vision extends SubsystemBase {
     return null;
   }
 
-  // public double GetDistanceToTargetFlat(PhotonTrackedTarget target){
-  //   Translation3d position = target.getBestCameraToTarget().getTranslation();
-  //   double hyp =
-  // Math.sqrt(Math.pow(position.getX(),2)+Math.pow(position.getZ(),2)+Math.pow(position.getY(),2));
-  //   hyp = position.getDistance(new Translation3d(0,0,0));
-  //   SmartDashboard.putNumber("X ROT",
-  // Math.toDegrees(target.getBestCameraToTarget().getRotation().getX()));
-  //   SmartDashboard.putNumber("Y ROT",
-  // Math.toDegrees(target.getBestCameraToTarget().getRotation().getY()));
-  //   SmartDashboard.putNumber("Z ROT",
-  // Math.toDegrees(target.getBestCameraToTarget().getRotation().getZ()));
-  //   return hyp*Math.cos(-target.getBestCameraToTarget().getRotation().getY());
-  // }
+  public double getTargetDistance(PhotonTrackedTarget target) {
+    double distanceRaw =
+        target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
+    double distance = (49.0 / 12) / Math.tan(Math.asin((49.0 / 12) / distanceRaw));
+    distance -= 0.5; // Offset
+    return distance;
+  }
+
+  private String getPoseString(Transform3d pose) {
+    return String.format("%1$.2f, %2$.2f, %3$.2f", pose.getX(), pose.getY(), pose.getZ());
+  }
+
+  private void configureDashboard() {
+    tab = Shuffleboard.getTab("Shooter");
+    driveTab = Shuffleboard.getTab("Driver");
+    sTargetIds = tab.getLayout("TargetIDs", BuiltInLayouts.kList).withSize(1, 3);
+  }
 }

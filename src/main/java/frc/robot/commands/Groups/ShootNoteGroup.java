@@ -4,8 +4,6 @@
 
 package frc.robot.commands.Groups;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Arm.VisionAim;
@@ -23,21 +21,13 @@ import frc.robot.subsystems.Vision;
 public class ShootNoteGroup extends SequentialCommandGroup {
   /** Creates a new Shoot. */
   public ShootNoteGroup(
-      Arm arm,
-      Shooter shooter,
-      Intake intake,
-      Drivetrain drivetrain,
-      Vision vision,
-      GenericEntry statusEntry) {
+      Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-        new PositionShoot(drivetrain, vision, statusEntry)
-          .alongWith(new VisionAim(arm, vision, statusEntry)),
-        // new InstantCommand(() -> {
-        //   statusEntry.setString("Shooting");
-        // }),
+        new PositionShoot(drivetrain, vision)
+          .alongWith(new VisionAim(arm, vision)),
         new WaitCommand(0.5),
         new ShootNote(shooter, intake).withTimeout(2));
   }

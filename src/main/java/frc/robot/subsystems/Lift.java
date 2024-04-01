@@ -17,6 +17,7 @@ public class Lift extends SubsystemBase {
   private WPI_TalonSRX motor;
   // Shuffleboard
   private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
   private GenericEntry sMotorSpeed;
 
   /** Creates a new Lifter. */
@@ -55,6 +56,7 @@ public class Lift extends SubsystemBase {
 
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Lift");
+    driveTab = Shuffleboard.getTab("Driver");
     sMotorSpeed = tab.add("Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
   }
 }

@@ -6,7 +6,6 @@ package frc.robot.commands.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -53,8 +52,6 @@ public class Move extends Command {
     double xSpeed, ySpeed;
     this.current = sDrivetrain.getPose();
 
-    SmartDashboard.putString("Auto Status", current.getX() + "," + current.getY());
-
     xSpeed = xController.calculate(current.getX());
     ySpeed = yController.calculate(current.getY());
 
@@ -70,7 +67,10 @@ public class Move extends Command {
       ySpeed = Math.max(Math.abs(ySpeed), DriveConstants.minSpeed) * Math.signum(ySpeed);
     }
 
-    sDrivetrain.drive(xSpeed/0.4, -ySpeed/0.4, 0, true);
+    xSpeed /= sDrivetrain.getSpeedFactor();
+    ySpeed /= -sDrivetrain.getSpeedFactor();
+
+    sDrivetrain.drive(xSpeed, ySpeed, 0, true);
   }
 
   // Called once the command ends or is interrupted.

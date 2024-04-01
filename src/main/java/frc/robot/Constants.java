@@ -89,6 +89,12 @@ public final class Constants {
     public static final int kAbsEncoder = 1;
     public static final double kEncoderOffset = 90 / 360;
 
+    // PID Parameters
+    public static final double kP = 0.2;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kTolerance = 0.5;
+
     // Limit switches
     // public static final int kMinLimit = 3;
     // public static final int kMaxLimit = 4;
@@ -97,6 +103,7 @@ public final class Constants {
 
     // Positions
     public static final double kDrivePosition = 45;
+    public static final double kStartPosition = 60;
     public static final double kPickupPosition = 6;
     public static final double kAmpPosition = 87;
   }

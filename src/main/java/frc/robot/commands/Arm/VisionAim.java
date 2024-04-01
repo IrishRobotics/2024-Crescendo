@@ -5,17 +5,13 @@
 package frc.robot.commands.Arm;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Vision;
-import java.util.Map;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionAim extends Command {
@@ -23,37 +19,27 @@ public class VisionAim extends Command {
   private Vision sVision;
   private PIDController pidController;
   private double position;
-
-  // private GenericEntry shootingDistance;
-  // private GenericEntry shootingAngle;
-  // private GenericEntry statusEntry;
+  private boolean valuesCalculated = false;
 
   /** Creates a new ArmShoot. */
-  public VisionAim(Arm arm, Vision vision, GenericEntry statusEntry) {
+  public VisionAim(Arm arm, Vision vision) {
     sArm = arm;
-    // this.statusEntry = statusEntry;
     sVision = vision;
 
-    pidController = new PIDController(0.2, 0, 0);
-    pidController.setTolerance(0.5);
+    pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
+    pidController.setTolerance(ArmConstants.kTolerance);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
-
-    // configureDashboard();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     valuesCalculated = false;
-    Shuffleboard.selectTab("Auto Shoot");
-    // if(statusEntry != null )    statusEntry.setString("Moving Arm");
-
+    Shuffleboard.selectTab("Driver");
     calculateValues();
   }
-
-  boolean valuesCalculated = false;
 
   void calculateValues() {
     int id =
@@ -67,15 +53,8 @@ public class VisionAim extends Command {
     }
     valuesCalculated = true;
 
-    double distanceRaw =
-        target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
-
-    double distance = (49.0 / 12) / Math.tan(Math.asin((49.0 / 12) / distanceRaw));
-    distance -= 0.5; // Offset
-    position = 10.3677 * Math.pow((distance - 3), 0.308731) + 12;
-
-    // shootingDistance.setDouble(distance);
-    // shootingAngle.setDouble(position);
+    double distance = sVision.getTargetDistance(target);
+    position = sArm.getTargetAngle(distance);
 
     pidController.setSetpoint(position);
   }
@@ -98,11 +77,6 @@ public class VisionAim extends Command {
   @Override
   public void end(boolean interrupted) {
     sArm.stop();
-
-    // shootingAngle.setDouble(0);
-    // shootingDistance.setDouble(0);
-
-    // if(statusEntry != null )  statusEntry.setString("Shooting");
   }
 
   // Returns true when the command should end.
@@ -110,21 +84,4 @@ public class VisionAim extends Command {
   public boolean isFinished() {
     return pidController.atSetpoint();
   }
-
-  // private void configureDashboard() {
-  //   ShuffleboardTab tab = Shuffleboard.getTab("Auto Shoot");
-
-  //   shootingAngle =
-  //       tab.add("Shooting Angle", 0)
-  //           .withWidget(BuiltInWidgets.kGyro)
-  //           .withSize(2, 2)
-  //           .withProperties(Map.of("startingAngle", 270))
-  //           .getEntry();
-
-  //   shootingDistance =
-  //       tab.add("Shooting Distance", 0)
-  //           .withWidget(BuiltInWidgets.kNumberBar)
-  //           .withSize(2, 1)
-  //           .getEntry();
-  // }
 }

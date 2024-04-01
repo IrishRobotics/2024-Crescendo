@@ -6,6 +6,7 @@ package frc.robot.commands.Arm;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 
 public class MoveArm extends Command {
@@ -18,12 +19,11 @@ public class MoveArm extends Command {
     this.sArm = arm;
     this.position = position;
 
-    pidController = new PIDController(0.2, 0, 0);
+    pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
+    pidController.setTolerance(ArmConstants.kTolerance);
     pidController.setSetpoint(position);
-    pidController.setTolerance(0.5);
 
     // Use addRequirements() here to declare subsystem dependencies.
-
     addRequirements(arm);
   }
 
@@ -49,8 +49,6 @@ public class MoveArm extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return false;
-    // return Math.abs(sArm.GetAngle()-position)<.5;
     return pidController.atSetpoint();
   }
 }

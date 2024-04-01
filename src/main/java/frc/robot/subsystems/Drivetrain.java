@@ -56,6 +56,7 @@ public class Drivetrain extends SubsystemBase {
   // Shuffleboard
 
   private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
   private GenericEntry sFrontLeftMotorDistances;
   private GenericEntry sFrontRightMotorDistances;
   private GenericEntry sRearLeftMotorDistances;
@@ -155,10 +156,18 @@ public class Drivetrain extends SubsystemBase {
   public void toggleGear() {
     if (speedValue == DriveConstants.kHighGear) {
       speedValue = DriveConstants.kLowGear;
-      SmartDashboard.putBoolean("Gear", false);
+      driveTab.addBoolean(
+          "Gear",
+          () -> {
+            return false;
+          });
     } else if (speedValue == DriveConstants.kLowGear) {
       speedValue = DriveConstants.kHighGear;
-      SmartDashboard.putBoolean("Gear", true);
+      driveTab.addBoolean(
+          "Gear",
+          () -> {
+            return true;
+          });
     }
   }
 
@@ -184,6 +193,7 @@ public class Drivetrain extends SubsystemBase {
 
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Drivetrain");
+    driveTab = Shuffleboard.getTab("Driver");
     tab.add("Drivetrain", mMecanumDrive);
     tab.add("NavX", mNavx.getRotation2d().getDegrees());
     sFrontLeftMotorDistances =
@@ -209,6 +219,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   // Getter functions
+  public double getSpeedFactor() {
+    return speedValue;
+  }
+
   public Pose2d getPose() {
     return robotPose;
   }

@@ -23,6 +23,7 @@ public class Intake extends SubsystemBase {
   private DigitalInput noteDetector;
   // Shuffleboard
   private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
   private GenericEntry sMotorSpeed;
   private GenericEntry sNoteDetected;
 
@@ -68,6 +69,7 @@ public class Intake extends SubsystemBase {
 
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Intake");
+    driveTab = Shuffleboard.getTab("Driver");
     sMotorSpeed = tab.add("Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
     sNoteDetected =
         tab.add("Note Detected", this.noteDetected())

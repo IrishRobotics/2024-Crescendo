@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class Shooter extends SubsystemBase {
 
   // Shuffleboard
   private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
   private GenericEntry sMotor1Speed;
   private GenericEntry sMotor2Speed;
 
@@ -83,8 +85,13 @@ public class Shooter extends SubsystemBase {
         / 2;
   }
 
+  public Command cmdRun(double speed) {
+    return this.runEnd(() -> this.setSpeed(speed), this::stop);
+  }
+
   private void configureDashboard() {
     tab = Shuffleboard.getTab("Shooter");
+    driveTab = Shuffleboard.getTab("Driver");
     sMotor1Speed =
         tab.add("Motor 1", 0)
             .withWidget(BuiltInWidgets.kDial)

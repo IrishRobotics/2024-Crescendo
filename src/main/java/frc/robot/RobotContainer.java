@@ -4,13 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -69,40 +67,39 @@ public class RobotContainer {
   private Trigger armUpTrigger;
   private Trigger armDownTrigger;
 
-  GenericEntry shootNodeStatusEntry;
   // Auto Chooser
-  SendableChooser<Command> autoSelect = new SendableChooser<>();
+  private SendableChooser<Command> autoSelect;
 
-  // Autonomous
-  // TODO - Add auto commands
+  // Shuffleboard
+  private ShuffleboardTab driveTab;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     // Init Joysticks
     mOpController = new XboxController(Constants.kDriverControllerPort);
     mCoopController = new XboxController(Constants.kCoopControllerPort);
 
     // INit subsystems
+    sVision = new Vision();
     sDrivetrain = new Drivetrain();
     sIntake = new Intake();
     sShooter = new Shooter();
     sArm = new Arm();
-    sVision = new Vision();
     sLift = new Lift();
 
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
 
     // Setup auto selector
+    autoSelect = new SendableChooser<Command>();
     autoSelect.setDefaultOption("Nothing", null);
     autoSelect.addOption("Potato Move", new PotatoAuto(sDrivetrain));
     autoSelect.addOption("Move Out", new MoveOut(sDrivetrain));
-    autoSelect.addOption("Speaker Mid", new MidSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision, null));
-    SmartDashboard.putData(autoSelect);
+    autoSelect.addOption("Speaker Mid", new MidSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     // Configure the trigger bindings
     configureBindings();
-    
   }
 
   /**
@@ -115,6 +112,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // shuffleboard
+    driveTab = Shuffleboard.getTab("Driver");
+    driveTab.add(autoSelect);
+
     /// Op
     toggleGearBtn = new JoystickButton(mOpController, OpConstants.kGearButton);
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
@@ -126,22 +127,12 @@ public class RobotContainer {
     liftDownTrigger.whileTrue(sLift.cmdDown());
 
     /// Coop
-
-    // Groups
     intakeNoteTrigger = new JoystickButton(mCoopController, OpConstants.kIntakeButton);
     intakeNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
     intakeNoteTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
-    shootNodeStatusEntry =
-        Shuffleboard.getTab("Auto Shoot").add("Status", "Not Running").withSize(3, 2).getEntry();
     shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
-    shootNoteTrigger.whileTrue(
-        new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, shootNodeStatusEntry));
-    shootNoteTrigger.onFalse(
-        new InstantCommand(
-            () -> {
-              shootNodeStatusEntry.setString("Not Running");
-            }));
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     ejectNodeTrigger =
         new Trigger(
@@ -175,8 +166,6 @@ public class RobotContainer {
               return mCoopController.getPOV() == 180;
             });
     armDownTrigger.whileTrue(sArm.cmdDown());
-
-    SmartDashboard.putData(autoSelect);
   }
 
   // Getter Methods
