@@ -73,6 +73,7 @@ public class Vision extends SubsystemBase {
     return distance;
   }
 
+
   private String getPoseString(Transform3d pose) {
     return String.format("%1$.2f, %2$.2f, %3$.2f", pose.getX(), pose.getY(), pose.getZ());
   }
