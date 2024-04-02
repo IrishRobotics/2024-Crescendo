@@ -68,9 +68,9 @@ public class Move extends Command {
     }
 
     xSpeed /= sDrivetrain.getSpeedFactor();
-    ySpeed /= -sDrivetrain.getSpeedFactor();
+    ySpeed /= sDrivetrain.getSpeedFactor();
 
-    sDrivetrain.drive(xSpeed, ySpeed, 0, true);
+    sDrivetrain.drive(xSpeed*0.75, -ySpeed*0.75, 0, true);
   }
 
   // Called once the command ends or is interrupted.

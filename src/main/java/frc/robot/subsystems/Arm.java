@@ -25,6 +25,7 @@ public class Arm extends SubsystemBase {
   private ShuffleboardTab tab;
   private ShuffleboardTab driveTab;
   private GenericEntry sArmPosition;
+  private GenericEntry sTargetAngle;
   private GenericEntry sArmSpeed;
 
   /** Creates a new Arm. */
@@ -53,6 +54,8 @@ public class Arm extends SubsystemBase {
       speed = 0;
     }
 
+    if(Math.abs(speed) < 0.4) speed = 0.4 * Math.signum(speed);
+
     mMotor1.set(speed);
     sArmSpeed.setDouble(speed);
   }
@@ -68,7 +71,7 @@ public class Arm extends SubsystemBase {
 
   public double getTargetAngle(double feet) {
     double val = 10.3677 * Math.pow((feet - 3), 0.308731) + 12;
-    driveTab.add("Target Angle", val);
+    sTargetAngle.setDouble(val);
     return val;
   }
 
@@ -87,6 +90,13 @@ public class Arm extends SubsystemBase {
         tab.add("Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", -1, "max", 1))
+            .getEntry();
+    
+    sTargetAngle = 
+        tab.add("Target Angle", this.getAngle())
+            .withSize(2, 2)
+            .withWidget(BuiltInWidgets.kGyro)
+            .withProperties(Map.of("startingAngle", 270))
             .getEntry();
   }
 

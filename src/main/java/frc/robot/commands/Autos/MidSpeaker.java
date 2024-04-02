@@ -32,14 +32,16 @@ public class MidSpeaker extends InstantCommand {
     blueCommandSequence =
         Commands.sequence(
             new ShootNoteGroup(arm, shooter, intake, drivetrain, vision),
-            new Move(new Pose2d(2, 1, new Rotation2d()), drivetrain)
-                .alongWith(new PickupNoteGroup(arm, intake)));
+            new Move(new Pose2d(1.25, 0, new Rotation2d()), drivetrain)
+                .alongWith(new PickupNoteGroup(arm, intake)),
+            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision));
 
     redCommandSequence =
         Commands.sequence(
             new ShootNoteGroup(arm, shooter, intake, drivetrain, vision),
-            new Move(new Pose2d(2, 1, new Rotation2d()), drivetrain)
-                .alongWith(new PickupNoteGroup(arm, intake)));
+            new Move(new Pose2d(1.25, 0, new Rotation2d()), drivetrain)
+                .alongWith(new PickupNoteGroup(arm, intake)),
+            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision));
   }
 
   // Called when the command is initially scheduled.

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.fasterxml.jackson.databind.ser.impl.FailingSerializer;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -67,6 +68,7 @@ public class Drivetrain extends SubsystemBase {
   private GenericEntry sForwardSpeed;
   private GenericEntry sStrafeSpeed;
   private GenericEntry sTurnSpeed;
+  private GenericEntry sGear;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -121,9 +123,9 @@ public class Drivetrain extends SubsystemBase {
             robotPose);
 
     speedValue = DriveConstants.kHighGear;
-    toggleGear();
 
     configureDashboard();
+    toggleGear();
   }
 
   @Override
@@ -156,18 +158,10 @@ public class Drivetrain extends SubsystemBase {
   public void toggleGear() {
     if (speedValue == DriveConstants.kHighGear) {
       speedValue = DriveConstants.kLowGear;
-      driveTab.addBoolean(
-          "Gear",
-          () -> {
-            return false;
-          });
+      sGear.setBoolean(false);
     } else if (speedValue == DriveConstants.kLowGear) {
       speedValue = DriveConstants.kHighGear;
-      driveTab.addBoolean(
-          "Gear",
-          () -> {
-            return true;
-          });
+      sGear.setBoolean(true);
     }
   }
 
@@ -209,6 +203,7 @@ public class Drivetrain extends SubsystemBase {
     sPoseX = tab.add("Pose X (m)", robotPose.getX()).getEntry();
     sPoseY = tab.add("Pose Y (m)", robotPose.getY()).getEntry();
     sRoation = tab.add("Angle", mNavx.getAngle()).withWidget(BuiltInWidgets.kGyro).getEntry();
+    sGear = tab.add("Gear", false).getEntry();
 
     SmartDashboard.putData(field);
   }

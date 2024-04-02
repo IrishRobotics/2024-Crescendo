@@ -10,16 +10,16 @@ Y and B - Lift Up and Down
 
 ## Normal
 
-Right Bumper - Intake note
+Left Bumper - Intake note
 
-Right Trigger - Eject note
+Left Trigger - Eject note
 
-Left Trigger - Shoot note
+Right Bumper - Shoot note
 
 A Button - Amp Drop
 
 ## Override
 
-Left Trigger - Override Shoot
+Right Trigger - Override Shoot
 
 D-Pad - Arm manual move

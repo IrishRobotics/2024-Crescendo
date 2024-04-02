@@ -24,14 +24,14 @@ public final class Constants {
     // Drive
     public static final int kGearButton = XboxController.Button.kStart.value;
     // Intake
-    public static final int kIntakeButton = XboxController.Button.kRightBumper.value;
-    public static final int kEjectButton = XboxController.Axis.kRightTrigger.value;
+    public static final int kIntakeButton = XboxController.Button.kLeftBumper.value;
+    public static final int kEjectButton = XboxController.Axis.kLeftTrigger.value;
     // Lift
     public static final int kLiftDownButton = XboxController.Button.kB.value;
     public static final int kLiftUpButton = XboxController.Button.kY.value;
     // Input
-    public static final int overrideShootButton = XboxController.Axis.kLeftTrigger.value;
-    public static final int kShootButton = XboxController.Button.kLeftBumper.value;
+    public static final int overrideShootButton = XboxController.Axis.kRightTrigger.value;
+    public static final int kShootButton = XboxController.Button.kRightBumper.value;
     public static final int kAmpButton = XboxController.Button.kA.value;
   }
 
@@ -63,6 +63,7 @@ public final class Constants {
 
     // Sensors
     public static final int kNoteDetectorID = 0;
+    public static final double kIntakeOutSpeed = 0.3;
   }
 
   public static class ShooterConstants {

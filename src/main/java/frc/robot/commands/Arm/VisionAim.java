@@ -67,9 +67,6 @@ public class VisionAim extends Command {
     }
     double setSpeed = pidController.calculate(sArm.getAngle(), position);
 
-    // double setspeed if we are less than motor can output.
-    if (Math.abs(setSpeed) < 0.3) setSpeed *= 2;
-
     sArm.move(setSpeed);
   }
 

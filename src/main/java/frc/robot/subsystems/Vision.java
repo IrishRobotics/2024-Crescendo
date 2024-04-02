@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -25,6 +26,7 @@ public class Vision extends SubsystemBase {
   private ShuffleboardTab tab;
   private ShuffleboardTab driveTab;
   private ShuffleboardLayout sTargetIds;
+  private GenericEntry sDistance;
 
   /** Creates a new Vision. */
   public Vision() {
@@ -37,8 +39,8 @@ public class Vision extends SubsystemBase {
     rawResult = camera.getLatestResult();
     sTargetIds.getComponents().clear();
     for (PhotonTrackedTarget target : rawResult.targets) {
-      sTargetIds.add(
-          "Target: " + target.getFiducialId(), getPoseString(target.getBestCameraToTarget()));
+      // sTargetIds.add(
+      //     "Target: " + target.getFiducialId(), getPoseString(target.getBestCameraToTarget()));
 
       // Get target distance
       if ((DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -46,11 +48,7 @@ public class Vision extends SubsystemBase {
           || (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
               && target.getFiducialId() == 4)) {
         double distance = getTargetDistance(target);
-        driveTab.addDouble(
-            "Target Distance",
-            () -> {
-              return distance;
-            });
+        sDistance.setDouble(            distance);
       }
     }
   }
@@ -69,7 +67,7 @@ public class Vision extends SubsystemBase {
     double distanceRaw =
         target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
     double distance = (49.0 / 12) / Math.tan(Math.asin((49.0 / 12) / distanceRaw));
-    distance -= 0.5; // Offset
+    //distance -= 0.5; // Offset
     return distance;
   }
 
@@ -82,5 +80,6 @@ public class Vision extends SubsystemBase {
     tab = Shuffleboard.getTab("Shooter");
     driveTab = Shuffleboard.getTab("Driver");
     sTargetIds = tab.getLayout("TargetIDs", BuiltInLayouts.kList).withSize(1, 3);
+    sDistance = tab.add("Target Distance",0).getEntry();
   }
 }
