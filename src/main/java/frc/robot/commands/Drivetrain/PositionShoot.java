@@ -16,11 +16,14 @@ public class PositionShoot extends Command {
   private Drivetrain sDrivetrain;
   private Vision sVision;
   private double minSpeed = 0.25;
+  private boolean foundTarget = false;
+  private boolean autoCommand = false;
 
   /** Creates a new PositionShoot. */
-  public PositionShoot(Drivetrain drivetrain, Vision vision) {
+  public PositionShoot(Drivetrain drivetrain, Vision vision, boolean autoCommand) {
     this.sDrivetrain = drivetrain;
     this.sVision = vision;
+    this.autoCommand = autoCommand;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -29,7 +32,7 @@ public class PositionShoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //  if(shootingStatus != null) shootingStatus.setString("Aligning robot");
+    foundTarget = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,12 +53,15 @@ public class PositionShoot extends Command {
       if (Math.abs(movement) < minSpeed) {
         movement = minSpeed * Math.signum(movement);
       }
-      sDrivetrain.drive(0, 0, movement, false);
+      foundTarget = true;
     } else if (sideTag != null) {
       movement = sideTag.getBestCameraToTarget().getY();
       if (Math.abs(movement) < minSpeed) {
         movement = minSpeed * Math.signum(movement);
       }
+      foundTarget = true;
+    } else if(!foundTarget && DriverStation.getMatchTime() < 15) {
+      movement = 0.5;
     }
     sDrivetrain.drive(0, 0, -movement, false);
   }

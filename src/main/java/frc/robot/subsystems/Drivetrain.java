@@ -83,6 +83,7 @@ public class Drivetrain extends SubsystemBase {
     mMecanumDrive =
         new MecanumDrive(mFrontLeftMotor, mRearLeftMotor, mFrontRightMotor, mRearRightMotor);
     mNavx = new AHRS();
+
     this.addChild("Drivetrain", mMecanumDrive);
     this.addChild("NavX", mNavx);
 
@@ -150,7 +151,7 @@ public class Drivetrain extends SubsystemBase {
     sRearRightMotorDistances.setDouble(getWheelDistance(mRearRightMotor));
     sPoseX.setDouble(robotPose.getX());
     sPoseY.setDouble(robotPose.getY());
-    sRoation.setDouble(mNavx.getAngle());
+    sRoation.setDouble(getAngle());
 
     SmartDashboard.updateValues();
   }
@@ -170,7 +171,8 @@ public class Drivetrain extends SubsystemBase {
     double _y = y * Math.abs(y) * speedValue;
     double _z = turn * Math.abs(turn) * speedValue;
     if (fieldRelitave) {
-      mMecanumDrive.driveCartesian(_x, _y, _z, Rotation2d.fromDegrees(mNavx.getAngle()));
+      mMecanumDrive.driveCartesian(_x, _y, _z, new Rotation2d(0));
+      // mMecanumDrive.driveCartesian(_x, _y, _z, Rotation2d.fromDegrees(mNavx.getAngle()));
     } else {
       mMecanumDrive.driveCartesian(_x, _y, _z);
     }
@@ -202,7 +204,7 @@ public class Drivetrain extends SubsystemBase {
     sTurnSpeed = tab.add("Z Speed", 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
     sPoseX = tab.add("Pose X (m)", robotPose.getX()).getEntry();
     sPoseY = tab.add("Pose Y (m)", robotPose.getY()).getEntry();
-    sRoation = tab.add("Angle", mNavx.getAngle()).withWidget(BuiltInWidgets.kGyro).getEntry();
+    sRoation = tab.add("Angle", getAngle()).withWidget(BuiltInWidgets.kGyro).getEntry();
     sGear = tab.add("Gear", false).getEntry();
 
     SmartDashboard.putData(field);
@@ -220,6 +222,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getPose() {
     return robotPose;
+  }
+
+  public double getAngle(){
+    return mNavx.getAngle();
   }
 
   private double getWheelDistance(CANSparkMax motor) {

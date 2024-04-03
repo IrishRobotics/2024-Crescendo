@@ -105,7 +105,7 @@ public final class Constants {
     // Positions
     public static final double kDrivePosition = 45;
     public static final double kStartPosition = 60;
-    public static final double kPickupPosition = 6;
+    public static final double kPickupPosition = 5;
     public static final double kAmpPosition = 87;
   }
 

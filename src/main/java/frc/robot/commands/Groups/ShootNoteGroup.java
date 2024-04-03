@@ -21,12 +21,12 @@ import frc.robot.subsystems.Vision;
 public class ShootNoteGroup extends SequentialCommandGroup {
   /** Creates a new Shoot. */
   public ShootNoteGroup(
-      Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
+      Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision, boolean autoCommand) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-        new PositionShoot(drivetrain, vision)
+        new PositionShoot(drivetrain, vision, autoCommand)
           .alongWith(new VisionAim(arm, vision)),
         new WaitCommand(0.5),
         new ShootNote(shooter, intake).withTimeout(2));

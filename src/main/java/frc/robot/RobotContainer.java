@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -14,8 +15,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
 import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Autos.LeftSpeaker;
 import frc.robot.commands.Autos.MidSpeaker;
 import frc.robot.commands.Autos.MoveOut;
+import frc.robot.commands.Autos.RightSpeaker;
 import frc.robot.commands.Drivetrain.OperatorDrive;
 import frc.robot.commands.Drivetrain.PotatoAuto;
 import frc.robot.commands.Groups.AmpGroup;
@@ -96,7 +99,9 @@ public class RobotContainer {
     autoSelect.setDefaultOption("Nothing", null);
     autoSelect.addOption("Potato Move", new PotatoAuto(sDrivetrain));
     autoSelect.addOption("Move Out", new MoveOut(sDrivetrain));
-    autoSelect.addOption("Speaker Mid", new MidSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    autoSelect.addOption("Speaker Middle", new MidSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    autoSelect.addOption("Speaker Left", new LeftSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    autoSelect.addOption("Speaker Right", new RightSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     // Configure the trigger bindings
     configureBindings();
@@ -132,7 +137,7 @@ public class RobotContainer {
     intakeNoteTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
     shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, false));
 
     ejectNodeTrigger =
         new Trigger(

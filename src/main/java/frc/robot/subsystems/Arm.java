@@ -54,7 +54,7 @@ public class Arm extends SubsystemBase {
       speed = 0;
     }
 
-    if(Math.abs(speed) < 0.4) speed = 0.4 * Math.signum(speed);
+    if(Math.abs(speed) < 0.2) speed = 0.2 * Math.signum(speed);
 
     mMotor1.set(speed);
     sArmSpeed.setDouble(speed);

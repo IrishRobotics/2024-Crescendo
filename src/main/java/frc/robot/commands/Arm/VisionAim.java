@@ -37,7 +37,7 @@ public class VisionAim extends Command {
   @Override
   public void initialize() {
     valuesCalculated = false;
-    Shuffleboard.selectTab("Driver");
+    position = ArmConstants.kDrivePosition;
     calculateValues();
   }
 
@@ -48,9 +48,10 @@ public class VisionAim extends Command {
             : 4; // 7 for blue, 4 for red
 
     PhotonTrackedTarget target = sVision.TargetWithID(id);
-    if (target == null) {
+    if (target == null || Math.abs(target.getYaw())<0.1) {
       return;
     }
+
     valuesCalculated = true;
 
     double distance = sVision.getTargetDistance(target);
@@ -65,6 +66,7 @@ public class VisionAim extends Command {
     if (!valuesCalculated) {
       calculateValues();
     }
+    
     double setSpeed = pidController.calculate(sArm.getAngle(), position);
 
     sArm.move(setSpeed);
@@ -79,6 +81,6 @@ public class VisionAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pidController.atSetpoint();
+    return pidController.atSetpoint() && valuesCalculated;
   }
 }
