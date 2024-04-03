@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.fasterxml.jackson.databind.ser.impl.FailingSerializer;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -224,7 +223,7 @@ public class Drivetrain extends SubsystemBase {
     return robotPose;
   }
 
-  public double getAngle(){
+  public double getAngle() {
     return mNavx.getAngle();
   }
 

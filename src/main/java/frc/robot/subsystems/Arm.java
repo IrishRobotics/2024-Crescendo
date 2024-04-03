@@ -54,7 +54,7 @@ public class Arm extends SubsystemBase {
       speed = 0;
     }
 
-    if(Math.abs(speed) < 0.2) speed = 0.2 * Math.signum(speed);
+    if (Math.abs(speed) < 0.2) speed = 0.2 * Math.signum(speed);
 
     mMotor1.set(speed);
     sArmSpeed.setDouble(speed);
@@ -91,8 +91,8 @@ public class Arm extends SubsystemBase {
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", -1, "max", 1))
             .getEntry();
-    
-    sTargetAngle = 
+
+    sTargetAngle =
         tab.add("Target Angle", this.getAngle())
             .withSize(2, 2)
             .withWidget(BuiltInWidgets.kGyro)

@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drivetrain.Move;
-import frc.robot.commands.Groups.PickupNoteGroup;
 import frc.robot.commands.Groups.ShootNoteGroup;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -28,19 +26,17 @@ public class LeftSpeaker extends InstantCommand {
   private Command blueCommandSequence;
   private Command redCommandSequence;
 
-  public LeftSpeaker(Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
-    //TODO rotate correctly for shoot.
+  public LeftSpeaker(
+      Arm arm, Shooter shooter, Intake intake, Drivetrain drivetrain, Vision vision) {
     blueCommandSequence =
         Commands.sequence(
             new Move(new Pose2d(.5, 0, new Rotation2d()), drivetrain),
-            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, true)
-        );
+            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, true));
 
     redCommandSequence =
         Commands.sequence(
             new Move(new Pose2d(.5, 0, new Rotation2d()), drivetrain),
-            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, true)
-        );
+            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, true));
   }
 
   // Called when the command is initially scheduled.

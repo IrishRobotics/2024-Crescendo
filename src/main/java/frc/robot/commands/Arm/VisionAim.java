@@ -7,7 +7,6 @@ package frc.robot.commands.Arm;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
@@ -48,7 +47,7 @@ public class VisionAim extends Command {
             : 4; // 7 for blue, 4 for red
 
     PhotonTrackedTarget target = sVision.TargetWithID(id);
-    if (target == null || Math.abs(target.getYaw())<0.1) {
+    if (target == null || Math.abs(target.getYaw()) < 0.1) {
       return;
     }
 
@@ -66,7 +65,7 @@ public class VisionAim extends Command {
     if (!valuesCalculated) {
       calculateValues();
     }
-    
+
     double setSpeed = pidController.calculate(sArm.getAngle(), position);
 
     sArm.move(setSpeed);

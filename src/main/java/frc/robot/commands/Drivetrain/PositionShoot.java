@@ -6,7 +6,6 @@ package frc.robot.commands.Drivetrain;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
@@ -60,18 +59,16 @@ public class PositionShoot extends Command {
         movement = minSpeed * Math.signum(movement);
       }
       foundTarget = true;
-    } else if(!foundTarget && DriverStation.getMatchTime() < 15) {
+    } else if (!foundTarget && DriverStation.getMatchTime() < 15) {
       movement = 0.5;
-      if(!rotateClockwise) movement *= -1;
+      if (!rotateClockwise) movement *= -1;
     }
     sDrivetrain.drive(0, 0, -movement, false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

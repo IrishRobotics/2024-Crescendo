@@ -48,7 +48,7 @@ public class Vision extends SubsystemBase {
           || (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
               && target.getFiducialId() == 4)) {
         double distance = getTargetDistance(target);
-        sDistance.setDouble(            distance);
+        sDistance.setDouble(distance);
       }
     }
   }
@@ -67,10 +67,9 @@ public class Vision extends SubsystemBase {
     double distanceRaw =
         target.getBestCameraToTarget().getTranslation().getDistance(new Translation3d()) * 3.28084;
     double distance = (49.0 / 12) / Math.tan(Math.asin((49.0 / 12) / distanceRaw));
-    //distance -= 0.5; // Offset
+    // distance -= 0.5; // Offset
     return distance;
   }
-
 
   private String getPoseString(Transform3d pose) {
     return String.format("%1$.2f, %2$.2f, %3$.2f", pose.getX(), pose.getY(), pose.getZ());
@@ -80,6 +79,6 @@ public class Vision extends SubsystemBase {
     tab = Shuffleboard.getTab("Shooter");
     driveTab = Shuffleboard.getTab("Driver");
     sTargetIds = tab.getLayout("TargetIDs", BuiltInLayouts.kList).withSize(1, 3);
-    sDistance = tab.add("Target Distance",0).getEntry();
+    sDistance = tab.add("Target Distance", 0).getEntry();
   }
 }
