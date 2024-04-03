@@ -137,7 +137,7 @@ public class RobotContainer {
     intakeNoteTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
     shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, false));
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, true));
 
     ejectNodeTrigger =
         new Trigger(

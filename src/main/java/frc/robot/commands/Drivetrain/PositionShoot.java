@@ -17,13 +17,13 @@ public class PositionShoot extends Command {
   private Vision sVision;
   private double minSpeed = 0.25;
   private boolean foundTarget = false;
-  private boolean autoCommand = false;
+  private boolean rotateClockwise = false;
 
   /** Creates a new PositionShoot. */
-  public PositionShoot(Drivetrain drivetrain, Vision vision, boolean autoCommand) {
+  public PositionShoot(Drivetrain drivetrain, Vision vision, boolean rotateClockwise) {
     this.sDrivetrain = drivetrain;
     this.sVision = vision;
-    this.autoCommand = autoCommand;
+    this.rotateClockwise = rotateClockwise;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -62,6 +62,7 @@ public class PositionShoot extends Command {
       foundTarget = true;
     } else if(!foundTarget && DriverStation.getMatchTime() < 15) {
       movement = 0.5;
+      if(!rotateClockwise) movement *= -1;
     }
     sDrivetrain.drive(0, 0, -movement, false);
   }

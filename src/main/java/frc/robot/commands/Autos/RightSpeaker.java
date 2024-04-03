@@ -34,13 +34,13 @@ public class RightSpeaker extends InstantCommand {
     blueCommandSequence =
         Commands.sequence(
             new Move(new Pose2d(.5, 0, new Rotation2d()), drivetrain),
-            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, true)
+            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, false)
         );
 
     redCommandSequence =
         Commands.sequence(
             new Move(new Pose2d(.5, 0, new Rotation2d()), drivetrain),
-            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, true)
+            new ShootNoteGroup(arm, shooter, intake, drivetrain, vision, false)
         );
   }
 
