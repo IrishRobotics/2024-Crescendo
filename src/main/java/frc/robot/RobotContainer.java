@@ -5,7 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
 import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Arm.VisionAim;
 import frc.robot.commands.Autos.LeftSpeaker;
 import frc.robot.commands.Autos.MidSpeaker;
 import frc.robot.commands.Autos.MoveOut;
@@ -23,6 +26,7 @@ import frc.robot.commands.Drivetrain.PotatoAuto;
 import frc.robot.commands.Groups.AmpGroup;
 import frc.robot.commands.Groups.PickupNoteGroup;
 import frc.robot.commands.Groups.ShootNoteGroup;
+import frc.robot.commands.Shooter.DropNote;
 import frc.robot.commands.Shooter.ShootNote;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -30,6 +34,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
+import java.util.Map;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -73,7 +78,13 @@ public class RobotContainer {
   private SendableChooser<Command> autoSelect;
 
   // Shuffleboard
+  private ShuffleboardTab commandTab;
   private ShuffleboardTab driveTab;
+  private ShuffleboardLayout sArmCommands;
+  private ShuffleboardLayout sDriveCommands;
+  private ShuffleboardLayout sIntakeCommands;
+  private ShuffleboardLayout sLiftCommands;
+  private ShuffleboardLayout sShooterCommands;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -117,6 +128,28 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // shuffleboard
+    commandTab = Shuffleboard.getTab("Commands");
+    sArmCommands =
+        commandTab
+            .getLayout("Arm", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sDriveCommands =
+        commandTab
+            .getLayout("Drive", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sIntakeCommands =
+        commandTab
+            .getLayout("Intake", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sLiftCommands =
+        commandTab
+            .getLayout("Lift", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sShooterCommands =
+        commandTab
+            .getLayout("Shooter", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+
     driveTab = Shuffleboard.getTab("Driver");
     driveTab.add(autoSelect);
 
@@ -138,11 +171,7 @@ public class RobotContainer {
     shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
     shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, true));
 
-    ejectNodeTrigger =
-        new Trigger(
-            () -> {
-              return mCoopController.getRawAxis(OpConstants.kEjectButton) >= 0.01;
-            });
+    ejectNodeTrigger = new Trigger(() -> {return mCoopController.getRawAxis(OpConstants.kEjectButton) >= 0.01;});
     ejectNodeTrigger.whileTrue(sIntake.cmdOut());
 
     ampTrigger = new JoystickButton(mCoopController, OpConstants.kAmpButton);
@@ -150,11 +179,7 @@ public class RobotContainer {
     ampTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
     // Override
-    overrideShootNodeTrigger =
-        new Trigger(
-            () -> {
-              return mCoopController.getRawAxis(OpConstants.overrideShootButton) >= 0.01;
-            });
+    overrideShootNodeTrigger = new Trigger(() -> {return mCoopController.getRawAxis(OpConstants.overrideShootButton) >= 0.01;});
     overrideShootNodeTrigger.whileTrue(new ShootNote(sShooter, sIntake));
 
     armUpTrigger =
@@ -170,6 +195,34 @@ public class RobotContainer {
               return mCoopController.getPOV() == 180;
             });
     armDownTrigger.whileTrue(sArm.cmdDown());
+
+    // Arm
+    sArmCommands.add(
+        "Default: " + ArmConstants.kDrivePosition, new MoveArm(sArm, ArmConstants.kDrivePosition));
+    sArmCommands.add(
+        "Amp: " + ArmConstants.kAmpPosition, new MoveArm(sArm, ArmConstants.kAmpPosition));
+    sArmCommands.add(
+        "Start: " + ArmConstants.kAmpPosition, new MoveArm(sArm, ArmConstants.kStartPosition));
+    sArmCommands.add(
+        "Pickup: " + ArmConstants.kAmpPosition, new MoveArm(sArm, ArmConstants.kPickupPosition));
+    sArmCommands.add("Vision Aim", new VisionAim(sArm, sVision));
+    sArmCommands.add("Up", sArm.cmdUp());
+    sArmCommands.add("Down", sArm.cmdDown());
+    // Drive
+    sDriveCommands.add(sDrivetrain.cmdToggleGear());
+    sDriveCommands.add(
+        "Full Auto Shoot", new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, true));
+    // Intake
+    sIntakeCommands.add("Pickup", new PickupNoteGroup(sArm, sIntake));
+    sIntakeCommands.add("Out", sIntake.cmdOut());
+    sIntakeCommands.add("In", sIntake.cmdIn());
+    // Lift
+    sLiftCommands.add("Up", sLift.cmdUp());
+    sLiftCommands.add("Down", sLift.cmdDown());
+    // Shooter
+    sShooterCommands.add("Shoot Note", new ShootNote(sShooter, sIntake));
+    sShooterCommands.add("Amp Shoot", new AmpGroup(sArm, sShooter, sIntake));
+    sShooterCommands.add("Drop", new DropNote(sShooter, sIntake));
   }
 
   // Getter Methods
