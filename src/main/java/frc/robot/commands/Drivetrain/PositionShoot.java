@@ -4,30 +4,26 @@
 
 package frc.robot.commands.Drivetrain;
 
-import javax.tools.Diagnostic;
-
-import org.opencv.core.Mat;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.apriltag.AprilTagDetection;
-import edu.wpi.first.apriltag.AprilTagDetector;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PositionShoot extends Command {
   private Drivetrain sDrivetrain;
   private Vision sVision;
-  private GenericEntry rotationEntry;
+  private double minSpeed = 0.25;
+  private boolean foundTarget = false;
+  private boolean rotateClockwise = false;
 
   /** Creates a new PositionShoot. */
-  public PositionShoot(Drivetrain drivetrain, Vision vision) {
-    sDrivetrain = drivetrain;
+  public PositionShoot(Drivetrain drivetrain, Vision vision, boolean rotateClockwise) {
+    this.sDrivetrain = drivetrain;
     this.sVision = vision;
+    this.rotateClockwise = rotateClockwise;
 
-    rotationEntry = Shuffleboard.getTab("April Tags").add("Shooting rotation", 0).getEntry();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -35,22 +31,39 @@ public class PositionShoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    foundTarget = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    PhotonTrackedTarget centerTag = sVision.TargetWithID(4);
-    PhotonTrackedTarget sideTag = sVision.TargetWithID(3);
+    double movement = 0;
+    PhotonTrackedTarget centerTag =
+        (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue)
+            ? sVision.TargetWithID(7)
+            : sVision.TargetWithID(4); // 7 for blue 4 for red
+    PhotonTrackedTarget sideTag =
+        (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue)
+            ? sVision.TargetWithID(8)
+            : sVision.TargetWithID(3); // 8 for blue 3 for red
 
-    if(centerTag!=null){
-
-    }else if(sideTag!=null){
-
-    }else{
-      
+    if (centerTag != null) {
+      movement = centerTag.getBestCameraToTarget().getY();
+      if (Math.abs(movement) < minSpeed) {
+        movement = minSpeed * Math.signum(movement);
+      }
+      foundTarget = true;
+    } else if (sideTag != null) {
+      movement = sideTag.getBestCameraToTarget().getY();
+      if (Math.abs(movement) < minSpeed) {
+        movement = minSpeed * Math.signum(movement);
+      }
+      foundTarget = true;
+    } else if (!foundTarget && DriverStation.getMatchTime() < 15) {
+      movement = 0.5;
+      if (!rotateClockwise) movement *= -1;
     }
+    sDrivetrain.drive(0, 0, -movement, false);
   }
 
   // Called once the command ends or is interrupted.
@@ -60,6 +73,15 @@ public class PositionShoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    PhotonTrackedTarget centerTag =
+        (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue)
+            ? sVision.TargetWithID(7)
+            : sVision.TargetWithID(4); // 7 for blue 4 for red
+
+    if (centerTag == null) {
+      return false;
+    }
+
+    return Math.abs(centerTag.getBestCameraToTarget().getY()) < 0.1;
   }
 }

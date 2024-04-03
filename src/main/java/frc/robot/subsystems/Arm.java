@@ -1,75 +1,111 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
+import java.util.Map;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import frc.robot.Constants;
-import frc.robot.commands.Arm.ArmReset;
-
-public class Arm extends PIDSubsystem {
-  public Encoder mEncoder = new Encoder(Constants.Arm.kEncoderPin1, Constants.Arm.kEncoderPin2);
-
-  public WPI_TalonSRX mMotor1 = new WPI_TalonSRX(Constants.Arm.kArmMotor1);
-  public WPI_TalonSRX mMotor2 = new WPI_TalonSRX(Constants.Arm.kArmMotor2);
-
-  public DigitalInput mMinLimit = new DigitalInput(Constants.Arm.kMinLimit);
-  public DigitalInput mMaxLimit = new DigitalInput(Constants.Arm.kMaxLimit);
+public class Arm extends SubsystemBase {
+  // Motors
+  private WPI_TalonSRX mMotor1;
+  // Sensors
+  private DutyCycleEncoder angleSensor;
+  // Shuffleboard
+  private ShuffleboardTab tab;
+  private ShuffleboardTab driveTab;
+  private GenericEntry sArmPosition;
+  private GenericEntry sTargetAngle;
+  private GenericEntry sArmSpeed;
 
   /** Creates a new Arm. */
   public Arm() {
-    super(
-        // The PIDController used by the subsystem
-        new PIDController(0, 0, 0));
+    mMotor1 = new WPI_TalonSRX(ArmConstants.kArmMotor1);
+    mMotor1.setNeutralMode(NeutralMode.Brake);
 
-    mEncoder.setDistancePerPulse(.5);// TODO get value
+    angleSensor = new DutyCycleEncoder(ArmConstants.kAbsEncoder);
+    angleSensor.setPositionOffset(ArmConstants.kEncoderOffset);
 
-    mMotor2.follow(mMotor1);
-  }
+    this.addChild("Motor", mMotor1);
+    this.addChild("Encoder", angleSensor);
 
-  public boolean encoderReset = false;
-  
-  @Override public void periodic() {
-    if(atMin()){
-      mEncoder.reset();
-      encoderReset = true;
-    }
-    if(atMax()){
-      this.disable();
-    }else{
-      this.enable();
-    }
-
-    super.periodic();
+    configureDashboard();
   }
 
   @Override
-  public void useOutput(double output, double setpoint) {
-    // Use the output here
-    mMotor1.set(output);
+  public void periodic() {
+    sArmPosition.setDouble(getAngle());
   }
 
-  @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    return mEncoder.getDistance();
+  public void move(double speed) {
+    // Check if angle is past soft limits
+    if ((getAngle() > ArmConstants.kMaxAngle && speed > 0)
+        || (getAngle() < ArmConstants.kMinAngle && speed < 0)) {
+      speed = 0;
+    }
+
+    if (Math.abs(speed) < 0.2) speed = 0.2 * Math.signum(speed);
+
+    mMotor1.set(speed);
+    sArmSpeed.setDouble(speed);
   }
 
-  public void resetEncoder(){
-    mEncoder.reset();
+  public void stop() {
+    mMotor1.set(0);
+    sArmSpeed.setDouble(0);
   }
 
-  private boolean atMax(){
-    return mMaxLimit.get();
+  public double getAngle() {
+    return (angleSensor.getAbsolutePosition() * 360 + 7) % 360;
   }
 
-  private boolean atMin(){
-    return mMinLimit.get();
+  public double getTargetAngle(double feet) {
+    double val = 10.3677 * Math.pow((feet - 3), 0.308731) + 12;
+    sTargetAngle.setDouble(val);
+    return val;
+  }
+
+  private void configureDashboard() {
+    tab = Shuffleboard.getTab("Arm");
+    driveTab = Shuffleboard.getTab("Driver");
+
+    sArmPosition =
+        tab.add("Position", this.getAngle())
+            .withSize(2, 2)
+            .withWidget(BuiltInWidgets.kGyro)
+            .withProperties(Map.of("startingAngle", 270))
+            .getEntry();
+
+    sArmSpeed =
+        tab.add("Speed", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", -1, "max", 1))
+            .getEntry();
+
+    sTargetAngle =
+        tab.add("Target Angle", this.getAngle())
+            .withSize(2, 2)
+            .withWidget(BuiltInWidgets.kGyro)
+            .withProperties(Map.of("startingAngle", 270))
+            .getEntry();
+  }
+
+  // Commands
+  public Command cmdUp() {
+    return this.runEnd(() -> this.move(0.5), this::stop);
+  }
+
+  public Command cmdDown() {
+    return this.runEnd(() -> this.move(-0.5), this::stop);
   }
 }
