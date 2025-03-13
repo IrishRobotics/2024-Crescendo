@@ -16,65 +16,100 @@ import edu.wpi.first.wpilibj.XboxController;
  */
 public final class Constants {
   public static final int kDriverControllerPort = 0;
-  public static final int kCoopControllerPort = 2;
+  public static final int kCoopControllerPort = 1;
+  public static final int kDEBUGControllerPost = 2;
 
   public static class OpConstants {
+
+    // Drive
+    public static final int kGearButton = XboxController.Button.kStart.value;
+    // Intake
+    public static final int kIntakeButton = XboxController.Button.kLeftBumper.value;
+    public static final int kEjectButton = XboxController.Axis.kLeftTrigger.value;
+    // Lift
+    public static final int kLiftDownButton = XboxController.Button.kB.value;
+    public static final int kLiftUpButton = XboxController.Button.kY.value;
+    // Input
+    public static final int overrideShootButton = XboxController.Axis.kRightTrigger.value;
+    public static final int kShootButton = XboxController.Button.kRightBumper.value;
+    public static final int kAmpButton = XboxController.Button.kA.value;
+  }
+
+  public static class DriveConstants {
+
     // Drivetrain Constants
     public static final int kFrontLeftID = 1;
     public static final int kFrontRightID = 2;
     public static final int kRearLeftID = 3;
     public static final int kRearRightID = 4;
-    public static final double kHighGear = 1;
-    public static final double kLowGear = 0.6;
+    public static final double kHighGear = 0.8;
+    public static final double kLowGear = 0.4;
     public static final double kMaxSpeed = 0.8;
 
-    //Input
-    public static final int GearButton = XboxController.Button.kStart.value;
+    public static final double kWheelCircumfrance = 0.2032 * Math.PI;
+    public static final double kGearRatio = 8.45;
+
+    // Auto PID Control
+    public static final double minSpeed = .3;
+    public static final double moveKP = 0.5;
+    public static final double moveKI = 0.001;
+    public static final double moveKD = 0;
   }
 
-  public static class IntakeConstants{
-    //Motors
+  public static class IntakeConstants {
+    // Motors
     public static final int kIntakeID = 5;
-    public static final double kIntakeSpeed = 0.5;
+    public static final double kIntakeSpeed = 0.6;
 
-    //Sensors
+    // Sensors
     public static final int kNoteDetectorID = 0;
-
-    //Input
-    public static final int intakeButton = XboxController.Button.kA.value;
+    public static final double kIntakeOutSpeed = 0.3;
   }
-  
-  public static class Shooter{
-    //Motors
+
+  public static class ShooterConstants {
+    // Motors
     public static final int kShooter1ID = 6;
-    public static final double kShooter1RPM = 1000;
-    public static final double kDrop1RMP = 100;
     public static final int kShooter2ID = 7;
-    public static final double kShooter2RPM = 1000;
-    public static final double kDrop2RMP = 100;
 
-    //Input
-    public static final int kShootButton = XboxController.Button.kLeftBumper.value;
-    public static final int kDropButton = XboxController.Button.kRightBumper.value;
+    public static final double kDropRMP = 1000;
+    public static final double kShootRPM = 5300;
+
+    public static final double kP = 0.0002;
+    public static final double kI = 0.000001;
+    public static final double kD = 0.0001;
+
+    public static final int kMinRpm = -6000;
+    public static final int kMaxRpm = 6000;
   }
-  
-  public static class Arm{
-    //Motors
+
+  public static class ArmConstants {
+    // Motors
     public static final int kArmMotor1 = 8;
-    public static final int kArmMotor2 = 9;
 
-    //Encoders
-    public static final int kEncoderPin1 = 1;
-    public static final int kEncoderPin2 = 2;
+    // Encoders
+    public static final int kAbsEncoder = 1;
+    public static final double kEncoderOffset = 90 / 360;
 
-    //Limit switches
-    public static final int kMinLimit = 3;
-    public static final int kMaxLimit = 4;
+    // PID Parameters
+    public static final double kP = 0.2;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kTolerance = 0.5;
 
-    //Positions
-    public static final double kDrivePosition = 50;
-    public static final double kPickupPosition = 10;
-    public static final double kShootPosition = 100;
-    public static final double kAmpPosition = 60;
+    // Limit switches
+    // public static final int kMinLimit = 3;
+    // public static final int kMaxLimit = 4;
+    public static final int kMinAngle = 4;
+    public static final int kMaxAngle = 90;
+
+    // Positions
+    public static final double kDrivePosition = 45;
+    public static final double kStartPosition = 60;
+    public static final double kPickupPosition = 5;
+    public static final double kAmpPosition = 87;
+  }
+
+  public static class Lift {
+    public static final int motorID = 9;
   }
 }

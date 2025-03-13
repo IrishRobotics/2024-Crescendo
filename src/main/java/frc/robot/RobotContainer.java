@@ -4,21 +4,37 @@
 
 package frc.robot;
 
-import frc.robot.commands.Arm.DefaultArm;
-import frc.robot.commands.Drivetrain.OperatorDrive;
-import frc.robot.commands.Groups.AmpGroup;
-import frc.robot.commands.Groups.PickupGroup;
-import frc.robot.commands.Groups.ShootGroup;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.*;
+import frc.robot.commands.Arm.MoveArm;
+import frc.robot.commands.Arm.VisionAim;
+import frc.robot.commands.Autos.LeftSpeaker;
+import frc.robot.commands.Autos.MidSpeaker;
+import frc.robot.commands.Autos.MoveOut;
+import frc.robot.commands.Autos.RightSpeaker;
+import frc.robot.commands.Drivetrain.OperatorDrive;
+import frc.robot.commands.Drivetrain.PotatoAuto;
+import frc.robot.commands.Groups.AmpGroup;
+import frc.robot.commands.Groups.PickupNoteGroup;
+import frc.robot.commands.Groups.ShootNoteGroup;
+import frc.robot.commands.Shooter.DropNote;
+import frc.robot.commands.Shooter.ShootNote;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
+import java.util.Map;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,39 +43,75 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  
+
   // Subsystems
-  private Drivetrain sDrivetrain = new Drivetrain();
-  private Intake sIntake = new Intake();
-  private Shooter sShooter = new Shooter();
-  private Arm sArm  = new Arm();
+  private Drivetrain sDrivetrain;
+  private Intake sIntake;
+  private Shooter sShooter;
+  private Arm sArm;
+  private Vision sVision;
+  private Lift sLift;
 
   // Joysticks
-  private XboxController mOpController = new XboxController(Constants.kDriverControllerPort);
-  private XboxController mCoopController = new XboxController(Constants.kCoopControllerPort);
+  private XboxController mOpController;
+  private XboxController mCoopController;
 
-  // Joystick Buttons
-  
+  //// Joystick Buttons
+  /// Driver
   private Trigger toggleGearBtn;
-  private Trigger inputNoteTrigger;
+  private Trigger liftUpTrigger;
+  private Trigger liftDownTrigger;
+  /// Coop
+  // Groups
+  private Trigger intakeNoteTrigger;
   private Trigger shootNoteTrigger;
-  private Trigger dropNodeTrigger;
-  // TODO - Add buttons
+  private Trigger ampTrigger;
+  // Intake
+  private Trigger ejectNodeTrigger;
+  // Shooter
+  private Trigger overrideShootNodeTrigger;
+  // Arm
+  private Trigger armUpTrigger;
+  private Trigger armDownTrigger;
 
   // Auto Chooser
-  SendableChooser<Command> autoSelect = new SendableChooser<>();
-  
-  // Autonomous
-  // TODO - Add auto commands
-  
+  private SendableChooser<Command> autoSelect;
 
-
+  // Shuffleboard
+  private ShuffleboardTab commandTab;
+  private ShuffleboardTab driveTab;
+  private ShuffleboardLayout sArmCommands;
+  private ShuffleboardLayout sDriveCommands;
+  private ShuffleboardLayout sIntakeCommands;
+  private ShuffleboardLayout sLiftCommands;
+  private ShuffleboardLayout sShooterCommands;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    // Init Joysticks
+    mOpController = new XboxController(Constants.kDriverControllerPort);
+    mCoopController = new XboxController(Constants.kCoopControllerPort);
+
+    // INit subsystems
+    sVision = new Vision();
+    sDrivetrain = new Drivetrain();
+    sIntake = new Intake();
+    sShooter = new Shooter();
+    sArm = new Arm();
+    sLift = new Lift();
+
     // Default Commands
     sDrivetrain.setDefaultCommand(new OperatorDrive(sDrivetrain, mOpController, false));
-    sArm.setDefaultCommand(new DefaultArm(sArm));
+
+    // Setup auto selector
+    autoSelect = new SendableChooser<Command>();
+    autoSelect.setDefaultOption("Nothing", null);
+    autoSelect.addOption("Potato Move", new PotatoAuto(sDrivetrain));
+    autoSelect.addOption("Move Out", new MoveOut(sDrivetrain));
+    autoSelect.addOption("Speaker Middle", new MidSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    autoSelect.addOption("Speaker Left", new LeftSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
+    autoSelect.addOption("Speaker Right", new RightSpeaker(sArm, sShooter, sIntake, sDrivetrain, sVision));
 
     // Configure the trigger bindings
     configureBindings();
@@ -75,35 +127,132 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
-    toggleGearBtn = new JoystickButton(mOpController, Constants.OpConstants.GearButton);
+    // shuffleboard
+    commandTab = Shuffleboard.getTab("Commands");
+    sArmCommands =
+        commandTab
+            .getLayout("Arm", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sDriveCommands =
+        commandTab
+            .getLayout("Drive", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sIntakeCommands =
+        commandTab
+            .getLayout("Intake", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sLiftCommands =
+        commandTab
+            .getLayout("Lift", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+    sShooterCommands =
+        commandTab
+            .getLayout("Shooter", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "HIDDEN"));
+
+    driveTab = Shuffleboard.getTab("Driver");
+    driveTab.add(autoSelect);
+
+    /// Op
+    toggleGearBtn = new JoystickButton(mOpController, OpConstants.kGearButton);
     toggleGearBtn.onTrue(sDrivetrain.cmdToggleGear());
 
-    inputNoteTrigger = new JoystickButton(mCoopController, Constants.IntakeConstants.intakeButton);
-    inputNoteTrigger.whileTrue(new PickupGroup(sArm, sIntake));
+    liftUpTrigger = new JoystickButton(mOpController, OpConstants.kLiftDownButton);
+    liftUpTrigger.whileTrue(sLift.cmdUp());
 
-    shootNoteTrigger = new JoystickButton(mCoopController, Constants.Shooter.kShootButton);
-    shootNoteTrigger.whileTrue(new ShootGroup(sArm, sShooter, sIntake));
+    liftDownTrigger = new JoystickButton(mOpController, OpConstants.kLiftUpButton);
+    liftDownTrigger.whileTrue(sLift.cmdDown());
 
-    dropNodeTrigger = new JoystickButton(mCoopController, Constants.Shooter.kDropButton);
-    dropNodeTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
+    /// Coop
+    intakeNoteTrigger = new JoystickButton(mCoopController, OpConstants.kIntakeButton);
+    intakeNoteTrigger.whileTrue(new PickupNoteGroup(sArm, sIntake));
+    intakeNoteTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    shootNoteTrigger = new JoystickButton(mCoopController, OpConstants.kShootButton);
+    shootNoteTrigger.whileTrue(new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, true));
+
+    ejectNodeTrigger = new Trigger(() -> {return mCoopController.getRawAxis(OpConstants.kEjectButton) >= 0.01;});
+    ejectNodeTrigger.whileTrue(sIntake.cmdOut());
+
+    ampTrigger = new JoystickButton(mCoopController, OpConstants.kAmpButton);
+    ampTrigger.whileTrue(new AmpGroup(sArm, sShooter, sIntake));
+    ampTrigger.onFalse(new MoveArm(sArm, ArmConstants.kDrivePosition));
+
+    // Override
+    overrideShootNodeTrigger = new Trigger(() -> {return mCoopController.getRawAxis(OpConstants.overrideShootButton) >= 0.01;});
+    overrideShootNodeTrigger.whileTrue(new ShootNote(sShooter, sIntake));
+
+    armUpTrigger =
+        new Trigger(
+            () -> {
+              return mCoopController.getPOV() == 0;
+            });
+    armUpTrigger.whileTrue(sArm.cmdUp());
+
+    armDownTrigger =
+        new Trigger(
+            () -> {
+              return mCoopController.getPOV() == 180;
+            });
+    armDownTrigger.whileTrue(sArm.cmdDown());
+
+    // Arm
+    sArmCommands.add(
+        "Default: " + ArmConstants.kDrivePosition, new MoveArm(sArm, ArmConstants.kDrivePosition));
+    sArmCommands.add(
+        "Amp: " + ArmConstants.kAmpPosition, new MoveArm(sArm, ArmConstants.kAmpPosition));
+    sArmCommands.add(
+        "Start: " + ArmConstants.kAmpPosition, new MoveArm(sArm, ArmConstants.kStartPosition));
+    sArmCommands.add(
+        "Pickup: " + ArmConstants.kAmpPosition, new MoveArm(sArm, ArmConstants.kPickupPosition));
+    sArmCommands.add("Vision Aim", new VisionAim(sArm, sVision));
+    sArmCommands.add("Up", sArm.cmdUp());
+    sArmCommands.add("Down", sArm.cmdDown());
+    // Drive
+    sDriveCommands.add(sDrivetrain.cmdToggleGear());
+    sDriveCommands.add(
+        "Full Auto Shoot", new ShootNoteGroup(sArm, sShooter, sIntake, sDrivetrain, sVision, true));
+    // Intake
+    sIntakeCommands.add("Pickup", new PickupNoteGroup(sArm, sIntake));
+    sIntakeCommands.add("Out", sIntake.cmdOut());
+    sIntakeCommands.add("In", sIntake.cmdIn());
+    // Lift
+    sLiftCommands.add("Up", sLift.cmdUp());
+    sLiftCommands.add("Down", sLift.cmdDown());
+    // Shooter
+    sShooterCommands.add("Shoot Note", new ShootNote(sShooter, sIntake));
+    sShooterCommands.add("Amp Shoot", new AmpGroup(sArm, sShooter, sIntake));
+    sShooterCommands.add("Drop", new DropNote(sShooter, sIntake));
   }
 
-  
   // Getter Methods
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {return autoSelect.getSelected();  }
-  public Drivetrain getDrivetrain(){return sDrivetrain;}
-  public Intake getIntake(){return sIntake;}
-  public Shooter getShooter(){return sShooter;}
-  public Arm getArm(){return sArm;}
-  public XboxController getOpController(){return mOpController;}
+  public Command getAutonomousCommand() {
+    return autoSelect.getSelected();
+  }
+
+  public Drivetrain getDrivetrain() {
+    return sDrivetrain;
+  }
+
+  public Intake getIntake() {
+    return sIntake;
+  }
+
+  public Shooter getShooter() {
+    return sShooter;
+  }
+
+  public Arm getArm() {
+    return sArm;
+  }
+
+  public XboxController getOpController() {
+    return mOpController;
+  }
 }
